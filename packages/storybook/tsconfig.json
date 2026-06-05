@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@hugo-ui/mui": ["../mui/src/index.ts"],
+      "@hugo-ui/mui/styles/theme": ["../mui/src/styles/theme.ts"],
+      "@hugo-ui/mui/utils/wcagUtils": ["../mui/src/utils/wcagUtils.ts"],
+      "@hugo-ui/mui/*": ["../mui/src/*"],
+      "@hugo-ui/shadcn": ["../shadcn/src/index.ts"],
+      "@hugo-ui/shadcn/styles.css": ["../shadcn/src/styles/globals.css"],
+      "@hugo-ui/shadcn/*": ["../shadcn/src/*"],
+      "@/*": ["../shadcn/src/*"]
+    }
+  },
+  "include": ["src", ".storybook"]
+}

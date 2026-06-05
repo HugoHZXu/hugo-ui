@@ -1,0 +1,47 @@
+{
+  "name": "hugo-ui",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@10.34.1",
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": ">=10.34.1 <11"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "19.2.6",
+      "react-dom": "19.2.6"
+    }
+  },
+  "scripts": {
+    "storybook": "pnpm --filter @hugo-ui/storybook run storybook",
+    "build-storybook": "pnpm --filter @hugo-ui/storybook run build-storybook",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "pnpm -r run lint",
+    "format": "prettier \"**/*.{ts,tsx,js,jsx,json,md}\" --write",
+    "build-mui": "pnpm --filter @hugo-ui/mui run build",
+    "build-shadcn": "pnpm --filter @hugo-ui/shadcn run build",
+    "build:all": "pnpm run build-mui && pnpm run build-shadcn && pnpm run build-storybook",
+    "test-mui": "pnpm --filter @hugo-ui/mui run test",
+    "test-shadcn": "pnpm --filter @hugo-ui/shadcn run test",
+    "test:all": "pnpm run test-mui && pnpm run test-shadcn",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "verify": "pnpm run lint && pnpm run typecheck && pnpm run test:all && pnpm run build:all"
+  },
+  "devDependencies": {
+    "@changesets/changelog-git": "^0.2.1",
+    "@changesets/cli": "^2.31.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.19.19",
+    "@typescript-eslint/eslint-plugin": "^8.60.0",
+    "@typescript-eslint/parser": "^8.60.0",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3"
+  }
+}
