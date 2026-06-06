@@ -2,14 +2,19 @@
 
 Design-system monorepo for reusable React component development.
 
-This workspace contains two publish-shaped React component packages and one Storybook
+This workspace contains two publish-shaped React component packages and one Storybook demo and
 verification app:
 
-| Package              | Purpose                                                   |
-| -------------------- | --------------------------------------------------------- |
-| `@hugo-ui/mui`       | MUI + Emotion component package for shared interface UI.  |
-| `@hugo-ui/shadcn`    | Tailwind/shadcn-style component package.                  |
-| `@hugo-ui/storybook` | Private Storybook verification surface for both packages. |
+| Package              | Purpose                                                    |
+| -------------------- | ---------------------------------------------------------- |
+| `@hugo-ui/mui`       | MUI + Emotion component package for shared interface UI.   |
+| `@hugo-ui/shadcn`    | Tailwind/shadcn-style component package.                   |
+| `@hugo-ui/storybook` | Storybook demo and verification surface for both packages. |
+
+## Demo
+
+The published Storybook demo is available at
+[https://hugohzxu.github.io/hugo-ui/](https://hugohzxu.github.io/hugo-ui/).
 
 ## Package Layout
 
