@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Generate MUI AI Contract'
+  short_description: 'Refresh MUI component AI contracts'
+  default_prompt: 'Use $generate-mui-ai-contract to refresh the @hugo-ui/mui AI component contracts.'

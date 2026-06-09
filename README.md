@@ -61,6 +61,19 @@ For non-interactive agent sessions, prefer the local Node wrapper:
 ./scripts/codex-node.sh pnpm run verify
 ```
 
+## AI Contract Artifact
+
+The first AI component contract artifact covers `@hugo-ui/mui` components and tokens. Generate,
+validate, drift-check, and pack it with:
+
+```bash
+./scripts/codex-node.sh pnpm run contract:check:mui
+./scripts/codex-node.sh pnpm run contract:pack:mui
+```
+
+Tagged releases matching `mui-ai-contract-v*` publish the packed contract as GitHub Release assets
+for downstream Figma/MCP demos.
+
 ## Publishing
 
 The package manifests include public npm package names and publish metadata. Versioning and

@@ -1,0 +1,124 @@
+name: MUI AI Contract Artifact
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - mui-ai-contract-v*
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build MUI AI Contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install pnpm
+        run: |
+          PNPM_VERSION="$(node -p "require('./package.json').packageManager.replace('pnpm@', '')")"
+          npm install --global "pnpm@$PNPM_VERSION"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate MUI contract
+        run: pnpm run contract:generate:mui
+
+      - name: Assert generated contract is committed
+        run: git diff --exit-code -- ai-contract
+
+      - name: Validate MUI contract
+        run: pnpm run contract:validate:mui
+
+      - name: Check MUI contract drift
+        run: pnpm run contract:check:mui
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Resolve contract version
+        id: contract-version
+        run: |
+          TAG_PREFIX="mui-ai-contract-v"
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            if [[ "${GITHUB_REF_NAME}" != ${TAG_PREFIX}* ]]; then
+              echo "Tag ${GITHUB_REF_NAME} does not match ${TAG_PREFIX}*" >&2
+              exit 1
+            fi
+            CONTRACT_VERSION="${GITHUB_REF_NAME#${TAG_PREFIX}}"
+          else
+            CONTRACT_VERSION="$(node -p "require('./packages/mui/package.json').version")"
+          fi
+
+          if [[ -z "${CONTRACT_VERSION}" ]]; then
+            echo "Resolved contract version is empty" >&2
+            exit 1
+          fi
+
+          echo "contract_version=${CONTRACT_VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Pack MUI contract
+        env:
+          CONTRACT_VERSION: ${{ steps.contract-version.outputs.contract_version }}
+        run: pnpm run contract:pack:mui
+
+      - name: Upload contract artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mui-ai-contract
+          path: dist/ai-contract/*
+          if-no-files-found: error
+
+  release:
+    name: Publish MUI AI Contract Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/mui-ai-contract-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download contract artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: mui-ai-contract
+          path: dist/ai-contract
+
+      - name: Verify release artifact version
+        run: |
+          TAG_PREFIX="mui-ai-contract-v"
+          CONTRACT_VERSION="${GITHUB_REF_NAME#${TAG_PREFIX}}"
+          ARTIFACT="dist/ai-contract/hugo-ui-mui-ai-contract-v${CONTRACT_VERSION}.tgz"
+          CHECKSUM="${ARTIFACT}.sha256"
+          PAYLOAD_DIR="$(mktemp -d)"
+
+          test -f "${ARTIFACT}"
+          test -f "${CHECKSUM}"
+          (cd dist/ai-contract && shasum -a 256 -c "$(basename "${CHECKSUM}")")
+
+          tar -xzf "${ARTIFACT}" -C "${PAYLOAD_DIR}"
+          PROVENANCE_VERSION="$(node -p "require('${PAYLOAD_DIR}/provenance.json').contractVersion")"
+          if [[ "${PROVENANCE_VERSION}" != "${CONTRACT_VERSION}" ]]; then
+            echo "provenance contractVersion ${PROVENANCE_VERSION} does not match tag version ${CONTRACT_VERSION}" >&2
+            exit 1
+          fi
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/ai-contract/* \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "MUI AI contract artifact for ${GITHUB_REF_NAME}."
