@@ -1,0 +1,4 @@
+interface:
+  display_name: 'MUI AI Contract Release Decision'
+  short_description: 'Decide if MUI AI contract should release'
+  default_prompt: 'Use $mui-ai-contract-release-decision to decide whether the current changes require publishing a new @hugo-ui/mui AI contract release.'
