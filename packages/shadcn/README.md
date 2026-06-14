@@ -15,6 +15,7 @@ Consumer-facing imports intentionally keep npm-style package names, as shown bel
 Import the library stylesheet once in your app entry:
 
 ```tsx
+import { useState } from 'react';
 import '@hugo-ui/shadcn/styles.css';
 import {
   Button,
@@ -24,9 +25,13 @@ import {
   CardTitle,
   HugoUIShadcnProvider,
   Input,
+  Modal,
+  ModalContentText,
 } from '@hugo-ui/shadcn';
 
 export function App() {
+  const [open, setOpen] = useState(false);
+
   return (
     <HugoUIShadcnProvider>
       <Card>
@@ -35,11 +40,20 @@ export function App() {
         </CardHeader>
         <CardContent>
           <Input label="Item name" />
-          <Button className="mt-4" tone="brand" variant="solid">
+          <Button className="mt-4" onClick={() => setOpen(true)} tone="brand" variant="solid">
             Create
           </Button>
         </CardContent>
       </Card>
+      <Modal
+        buttonDefs={{ primary: { onClick: () => setOpen(false) } }}
+        onClose={() => setOpen(false)}
+        onOpenChange={setOpen}
+        open={open}
+        title="Sample modal"
+      >
+        <ModalContentText>Review this sample note before saving.</ModalContentText>
+      </Modal>
     </HugoUIShadcnProvider>
   );
 }
@@ -65,3 +79,6 @@ Style ownership is split by layer:
   `textarea`, `adornment`, `helper`, `counter`, `status`, `spinner`, and `required-mark`.
   Input customization uses `slotProps` for native attributes and `classNames` for slot-level
   styling.
+- `Modal` is a Hugo semantic layer over the Radix Dialog primitive. It exposes stable slots such as
+  `modal-header`, `modal-title`, `modal-body`, `modal-footer`, and `modal-loading-indicator`, plus
+  `classNames` and `slotProps` for targeted customization.

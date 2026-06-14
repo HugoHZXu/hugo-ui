@@ -63,13 +63,18 @@ For non-interactive agent sessions, prefer the local Node wrapper:
 
 ## AI Contract Artifact
 
-The first AI component contract artifact covers `@hugo-ui/mui` components and tokens. Generate,
-validate, drift-check, and pack it with:
+The first AI component contract artifact covers `@hugo-ui/mui` components and tokens. Validate the
+checked-in contract, decide whether a new release is warranted, and pack it with:
 
 ```bash
 ./scripts/codex-node.sh pnpm run contract:check:mui
+./scripts/codex-node.sh pnpm run contract:decide:mui
 ./scripts/codex-node.sh pnpm run contract:pack:mui
 ```
+
+`contract:decide:mui` compares stable contract content against the latest `mui-ai-contract-v*`
+release tag while ignoring volatile provenance fields such as `generatedAt` and `sourceCommit`.
+Use its `publish`, `skip`, or `manual-review` decision before creating a new contract release tag.
 
 Tagged releases matching `mui-ai-contract-v*` publish the packed contract as GitHub Release assets
 for downstream Figma/MCP demos.

@@ -87,6 +87,9 @@
     var(--hugo-ui-shadcn-brand-deep) 40%,
     transparent
   );
+  --hugo-ui-shadcn-shadow-medium:
+    0 8px 16px color-mix(in oklab, var(--hugo-ui-shadcn-text-primary) 12%, transparent),
+    0 24px 48px color-mix(in oklab, var(--hugo-ui-shadcn-text-primary) 18%, transparent);
 
   --background: var(--hugo-ui-shadcn-surface-default);
   --foreground: var(--hugo-ui-shadcn-text-default);
@@ -134,18 +137,26 @@
   --color-hugo-brand-primary: var(--hugo-ui-shadcn-brand-primary);
   --color-hugo-brand-accent: var(--hugo-ui-shadcn-brand-accent);
   --color-hugo-brand-deep: var(--hugo-ui-shadcn-brand-deep);
+  --color-hugo-text-primary: var(--hugo-ui-shadcn-text-primary);
+  --color-hugo-text-default: var(--hugo-ui-shadcn-text-default);
+  --color-hugo-text-subtle: var(--hugo-ui-shadcn-text-subtle);
   --color-hugo-text-inverse: var(--hugo-ui-shadcn-text-inverse);
   --color-hugo-text-disabled: var(--hugo-ui-shadcn-text-disabled);
   --color-hugo-surface-default: var(--hugo-ui-shadcn-surface-default);
+  --color-hugo-surface-subtle: var(--hugo-ui-shadcn-surface-subtle);
+  --color-hugo-surface-tinted: var(--hugo-ui-shadcn-surface-tinted);
   --color-hugo-neutral-200: var(--hugo-ui-shadcn-neutral-grey-200);
   --color-hugo-neutral-500: var(--hugo-ui-shadcn-neutral-grey-500);
   --color-hugo-neutral-800: var(--hugo-ui-shadcn-neutral-grey-800);
   --color-hugo-neutral-1100: var(--hugo-ui-shadcn-neutral-grey-1100);
   --color-hugo-neutral-1200: var(--hugo-ui-shadcn-neutral-grey-1200);
   --color-hugo-neutral-disabled: var(--hugo-ui-shadcn-neutral-dark-grey);
+  --color-hugo-status-success: var(--hugo-ui-shadcn-status-success);
+  --color-hugo-status-warning: var(--hugo-ui-shadcn-status-warning);
   --color-hugo-status-error: var(--hugo-ui-shadcn-status-error);
   --color-hugo-status-destruct-strong: var(--hugo-ui-shadcn-status-destruct-strong);
   --color-hugo-status-destruct-active: var(--hugo-ui-shadcn-status-destruct-active);
+  --color-hugo-success-bg: var(--hugo-ui-shadcn-success-green-bg);
   --color-hugo-error-bg: var(--hugo-ui-shadcn-error-bg);
   --color-hugo-focus: var(--hugo-ui-shadcn-focus-ring);
   --color-hugo-focus-on-dark: var(--hugo-ui-shadcn-focus-ring-on-dark);
@@ -162,6 +173,7 @@
   --leading-hugo-button: 19px;
   --tracking-hugo-button: 0.02em;
   --tracking-hugo-button-small: 0;
+  --shadow-hugo-medium: var(--hugo-ui-shadcn-shadow-medium);
   --radius-sm: calc(var(--radius) * 0.75);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) * 2);
