@@ -1,0 +1,16 @@
+{
+  "$schema": "https://www.shadcn-vue.com/schema.json",
+  "style": "radix-nova",
+  "typescript": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/components/lib/utils"
+  },
+  "iconLibrary": "lucide"
+}

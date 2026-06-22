@@ -1,16 +1,13 @@
-import * as React from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { Slot } from '@radix-ui/react-slot';
+import type { Component, HTMLAttributes } from 'vue';
+import { cva } from 'class-variance-authority';
 
-import { cn } from '@/components/lib/utils';
+export type HugoUIShadcnVueButtonVariant = 'solid' | 'outline' | 'ghost';
+export type HugoUIShadcnVueButtonSize = 'sm' | 'default' | 'lg' | 'icon';
+export type HugoUIShadcnVueButtonTone = 'brand' | 'neutral' | 'danger' | 'inverse';
 
-export type HugoUIShadcnButtonVariant = 'solid' | 'outline' | 'ghost';
-export type HugoUIShadcnButtonSize = 'sm' | 'default' | 'lg' | 'icon';
-export type HugoUIShadcnButtonTone = 'brand' | 'neutral' | 'danger' | 'inverse';
-
-const buttonVariants = cva(
+export const buttonVariants = cva(
   [
-    'hugo-ui-shadcn-button relative inline-flex min-w-fit cursor-pointer items-center justify-center',
+    'hugo-ui-shadcn-vue-button relative inline-flex min-w-fit cursor-pointer items-center justify-center',
     'box-border rounded-full border-0 font-sans text-sm font-semibold leading-hugo-button',
     'tracking-hugo-button whitespace-nowrap outline-none transition-colors duration-150 ease-linear',
     'focus-visible:ring-2 focus-visible:ring-hugo-focus focus-visible:ring-inset',
@@ -125,154 +122,15 @@ const buttonVariants = cva(
   }
 );
 
-type NativeButtonProps = Omit<React.ComponentProps<'button'>, 'color'>;
-
-type ButtonProps = NativeButtonProps &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-    loading?: boolean;
-    loadingPosition?: 'start' | 'center';
-  };
-
-const buttonSpinner = (position: 'start' | 'center', size: HugoUIShadcnButtonSize) => (
-  <span
-    aria-hidden="true"
-    className={cn(
-      'rounded-full border-2 border-current border-t-transparent animate-spin',
-      size === 'sm' ? 'h-4 w-4' : 'h-6 w-6',
-      position === 'center' && 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
-    )}
-    data-position={position}
-    data-slot="button-spinner"
-  />
-);
-
-function Button({
-  className,
-  children,
-  variant = 'solid',
-  tone = 'brand',
-  size = 'default',
-  asChild = false,
-  loading = false,
-  loadingPosition = 'start',
-  disabled,
-  type = 'button',
-  tabIndex,
-  onClick,
-  'aria-label': ariaLabel,
-  ...props
-}: ButtonProps) {
-  const resolvedVariant = variant ?? 'solid';
-  const resolvedTone = tone ?? 'brand';
-  const resolvedSize = size ?? 'default';
-  const isIconOnly = resolvedSize === 'icon';
-  const isDisabled = disabled || loading;
-  const showCenterLoading = loading && loadingPosition === 'center';
-  const showStartLoading = loading && loadingPosition === 'start';
-  const buttonTabIndex = isDisabled ? -1 : tabIndex;
-  const rootClassName = cn(
-    buttonVariants({
-      variant: resolvedVariant,
-      tone: resolvedTone,
-      size: resolvedSize,
-    }),
-    className
-  );
-  const sharedProps = {
-    'aria-busy': loading || undefined,
-    'aria-label': ariaLabel,
-    className: rootClassName,
-    'data-disabled': disabled ? 'true' : undefined,
-    'data-icon-only': isIconOnly ? 'true' : undefined,
-    'data-loading': loading ? 'true' : undefined,
-    'data-size': resolvedSize,
-    'data-slot': 'button',
-    'data-tone': resolvedTone,
-    'data-variant': resolvedVariant,
-    tabIndex: buttonTabIndex,
-  };
-  const handleButtonClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
-    if (isDisabled) {
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    }
-
-    onClick?.(event);
-  };
-
-  const renderContentPart = (child: React.ReactNode, index: number) => {
-    if (typeof child === 'string' || typeof child === 'number') {
-      return (
-        <span data-slot="button-label" key={`button-label-${index}`}>
-          {child}
-        </span>
-      );
-    }
-
-    return child;
-  };
-
-  const renderContent = (content: React.ReactNode) => {
-    const contentParts = React.Children.toArray(content);
-
-    return (
-      <>
-        {showCenterLoading && buttonSpinner('center', resolvedSize)}
-        <span
-          className={cn(
-            'inline-flex items-center justify-center gap-2',
-            showCenterLoading && 'invisible'
-          )}
-          data-slot="button-content"
-        >
-          {showStartLoading && buttonSpinner('start', resolvedSize)}
-          {contentParts.map(renderContentPart)}
-        </span>
-      </>
-    );
-  };
-
-  if (asChild) {
-    const child = React.Children.only(children) as React.ReactElement<
-      React.HTMLAttributes<HTMLElement>
-    >;
-    const childOnClick = child.props.onClick;
-    const handleAsChildClick: React.MouseEventHandler<HTMLElement> = (event) => {
-      if (isDisabled) {
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-      }
-
-      childOnClick?.(event);
-      onClick?.(event as unknown as React.MouseEvent<HTMLButtonElement>);
-    };
-
-    return (
-      <Slot aria-disabled={isDisabled ? true : undefined} {...sharedProps} {...props}>
-        {React.cloneElement(
-          child,
-          { onClick: handleAsChildClick },
-          renderContent(child.props.children)
-        )}
-      </Slot>
-    );
-  }
-
-  return (
-    <button
-      {...sharedProps}
-      disabled={isDisabled}
-      onClick={handleButtonClick}
-      type={type}
-      {...props}
-    >
-      {renderContent(children)}
-    </button>
-  );
-}
-
-export { Button, buttonVariants };
-export type { ButtonProps };
+export type ButtonProps = {
+  as?: string | Component;
+  asChild?: boolean;
+  class?: HTMLAttributes['class'];
+  disabled?: boolean;
+  loading?: boolean;
+  loadingPosition?: 'start' | 'center';
+  size?: HugoUIShadcnVueButtonSize;
+  tone?: HugoUIShadcnVueButtonTone;
+  type?: 'button' | 'submit' | 'reset';
+  variant?: HugoUIShadcnVueButtonVariant;
+};

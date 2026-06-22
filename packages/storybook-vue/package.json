@@ -1,0 +1,32 @@
+{
+  "name": "@hugo-ui/storybook-vue",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource/noto-sans": "5.2.10",
+    "@hugo-ui/shadcn-vue": "workspace:*",
+    "lucide-vue-next": "^0.561.0",
+    "vue": "^3.5.25"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^10.4.1",
+    "@storybook/addon-docs": "^10.4.1",
+    "@storybook/vue3": "^10.4.1",
+    "@storybook/vue3-vite": "^10.4.1",
+    "@tailwindcss/postcss": "4.3.0",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "autoprefixer": "10.5.0",
+    "storybook": "^10.4.1",
+    "tailwindcss": "4.3.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14",
+    "vue-tsc": "^3.2.0"
+  },
+  "scripts": {
+    "storybook": "storybook dev -p 6007",
+    "build-storybook": "storybook build",
+    "lint": "eslint \"src/**/*.{ts,vue}\"",
+    "typecheck": "vue-tsc -p tsconfig.json --noEmit"
+  }
+}

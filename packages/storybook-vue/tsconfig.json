@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../shadcn-vue/src/*"],
+      "@hugo-ui/shadcn-vue": ["../shadcn-vue/src/index.ts"],
+      "@hugo-ui/shadcn-vue/styles.css": ["../shadcn-vue/src/styles/globals.css"]
+    },
+    "jsx": "preserve",
+    "types": ["vite/client"]
+  },
+  "include": ["src", ".storybook"],
+  "exclude": ["storybook-static"]
+}
