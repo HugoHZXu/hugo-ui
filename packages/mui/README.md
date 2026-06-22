@@ -12,13 +12,36 @@ Consumer-facing imports intentionally keep npm-style package names, as shown bel
 ## Usage
 
 ```tsx
-import { Button, Input, HugoUIProvider, hugoUITheme } from '@hugo-ui/mui';
+import { useState } from 'react';
+import { Button, DataGrid, Input, HugoUIProvider, hugoUITheme } from '@hugo-ui/mui';
+import type { DataGridSort } from '@hugo-ui/mui';
+
+const rows = [{ id: 'entry-1', label: 'Sample entry' }];
+const columns = [
+  {
+    id: 'label',
+    header: 'Item',
+    sortable: true,
+    minWidth: 160,
+    render: (row: (typeof rows)[number]) => row.label,
+  },
+];
 
 export function App() {
+  const [sort, setSort] = useState<DataGridSort>(null);
+
   return (
     <HugoUIProvider theme={hugoUITheme}>
       <Button>Click</Button>
       <Input label="Name" />
+      <DataGrid
+        ariaLabel="Example entries"
+        columns={columns}
+        rows={rows}
+        getRowId={(row) => row.id}
+        sort={sort}
+        onSortChange={setSort}
+      />
     </HugoUIProvider>
   );
 }

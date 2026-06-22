@@ -29,7 +29,7 @@ hugo-ui/
 ## Usage
 
 ```tsx
-import { HugoUIProvider, Table } from '@hugo-ui/mui';
+import { DataGrid, HugoUIProvider, Table } from '@hugo-ui/mui';
 import { Button } from '@hugo-ui/shadcn';
 import '@hugo-ui/shadcn/styles.css';
 ```

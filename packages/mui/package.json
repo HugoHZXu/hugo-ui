@@ -29,6 +29,8 @@
   },
   "dependencies": {
     "@emotion/cache": "11.14.0",
+    "@tanstack/react-table": "8.21.3",
+    "@tanstack/react-virtual": "3.14.3",
     "classnames": "2.5.1",
     "css-mediaquery": "0.1.2",
     "lodash": "4.18.1",

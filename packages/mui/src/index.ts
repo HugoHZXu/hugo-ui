@@ -10,6 +10,7 @@ export { HugoUIMessage as Message } from './Message';
 export { HugoUIStatusTag as StatusTag } from './StatusTag';
 export { HugoUITypography as Typography } from './Typography';
 export { HugoUITable as Table } from './Table/Table';
+export { HugoUIDataGrid as DataGrid } from './DataGrid/DataGrid';
 export { HugoUISearchBox as SearchBox } from './SearchBox';
 export { HugoUIToggle as Toggle } from './Toggle';
 export { HugoUIPageTemplate as PageTemplate } from './Templates';
@@ -66,6 +67,13 @@ export type {
   HugoUITableSort as TableSort,
   HugoUITablePagination as TablePagination,
 } from './Table/Table';
+export type {
+  HugoUIDataGridProps as DataGridProps,
+  HugoUIDataGridColumn as DataGridColumn,
+  HugoUIDataGridColumnSizing as DataGridColumnSizing,
+  HugoUIDataGridPagination as DataGridPagination,
+  HugoUIDataGridSort as DataGridSort,
+} from './DataGrid/DataGrid';
 export type { HugoUISearchBoxProps as SearchBoxProps } from './SearchBox';
 export type { HugoUIToggleProps as ToggleProps, HugoUIToggleOption as ToggleOption } from './Toggle';
 export type {
