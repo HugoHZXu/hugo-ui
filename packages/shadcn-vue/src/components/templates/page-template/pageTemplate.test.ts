@@ -43,6 +43,8 @@ describe('PageTemplate', () => {
     const selected = wrapper.get('[aria-current="page"]');
     expect(wrapper.find('aside').exists()).toBe(true);
     expect(selected.text()).toContain('Updates');
+    expect(selected.classes()).toContain('bg-hugo-surface-tinted');
+    expect(selected.classes()).not.toContain('bg-transparent');
   });
 
   it('emits beforeSelection and applies selection callback', async () => {

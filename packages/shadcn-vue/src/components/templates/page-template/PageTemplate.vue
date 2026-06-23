@@ -125,10 +125,11 @@ function selectItem(item: PageTemplateNavItem) {
               <div class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-1" :style="{ paddingLeft: '0px' }">
                 <button
                   type="button"
-                  class="flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg border border-transparent bg-transparent px-2.5 text-left text-sm font-semibold leading-tight tracking-normal text-hugo-text-default outline-none hover:bg-hugo-surface-tinted focus-visible:border-hugo-focus focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-hugo-focus"
+                  class="flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg border border-transparent px-2.5 text-left text-sm leading-tight tracking-normal outline-none hover:bg-hugo-surface-tinted focus-visible:border-hugo-focus focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-hugo-focus"
                   :class="
-                    selectedId === item.id &&
-                    'bg-hugo-surface-tinted font-bold text-hugo-text-primary hover:bg-hugo-surface-tinted'
+                    selectedId === item.id
+                      ? 'bg-hugo-surface-tinted font-bold text-hugo-text-primary'
+                      : 'bg-transparent font-semibold text-hugo-text-default'
                   "
                   :aria-current="selectedId === item.id ? 'page' : undefined"
                   @click="selectItem(item)"
@@ -165,10 +166,11 @@ function selectItem(item: PageTemplateNavItem) {
                 >
                   <button
                     type="button"
-                    class="flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg border border-transparent bg-transparent px-2.5 text-left text-sm font-semibold leading-tight tracking-normal text-hugo-text-default outline-none hover:bg-hugo-surface-tinted focus-visible:border-hugo-focus focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-hugo-focus"
+                    class="flex min-h-10 w-full cursor-pointer items-center gap-2.5 rounded-lg border border-transparent px-2.5 text-left text-sm leading-tight tracking-normal outline-none hover:bg-hugo-surface-tinted focus-visible:border-hugo-focus focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-1 focus-visible:outline-hugo-focus"
                     :class="
-                      selectedId === child.id &&
-                      'bg-hugo-surface-tinted font-bold text-hugo-text-primary hover:bg-hugo-surface-tinted'
+                      selectedId === child.id
+                        ? 'bg-hugo-surface-tinted font-bold text-hugo-text-primary'
+                        : 'bg-transparent font-semibold text-hugo-text-default'
                     "
                     :aria-current="selectedId === child.id ? 'page' : undefined"
                     @click="selectItem(child)"

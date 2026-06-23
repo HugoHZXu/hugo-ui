@@ -1,20 +1,25 @@
 # Hugo UI
 
-Design-system monorepo for reusable React component development.
+Design-system monorepo for reusable React and Vue component development.
 
-This workspace contains two publish-shaped React component packages and one Storybook demo and
-verification app:
+This workspace contains publish-shaped component packages and Storybook demo and verification apps:
 
-| Package              | Purpose                                                    |
-| -------------------- | ---------------------------------------------------------- |
-| `@hugo-ui/mui`       | MUI + Emotion component package for shared interface UI.   |
-| `@hugo-ui/shadcn`    | Tailwind/shadcn-style component package.                   |
-| `@hugo-ui/storybook` | Storybook demo and verification surface for both packages. |
+| Package                  | Purpose                                                  |
+| ------------------------ | -------------------------------------------------------- |
+| `@hugo-ui/mui`           | MUI + Emotion component package for shared interface UI. |
+| `@hugo-ui/shadcn`        | React Tailwind/shadcn-style component package.           |
+| `@hugo-ui/shadcn-vue`    | Vue Tailwind/shadcn-vue component package.               |
+| `@hugo-ui/storybook`     | React Storybook demo and verification surface.           |
+| `@hugo-ui/storybook-vue` | Vue Storybook demo and verification surface.             |
 
 ## Demo
 
-The published Storybook demo is available at
-[https://hugohzxu.github.io/hugo-ui/](https://hugohzxu.github.io/hugo-ui/).
+The published Storybook demos are available at:
+
+| Demo            | URL                                                                                |
+| --------------- | ---------------------------------------------------------------------------------- |
+| React Storybook | [https://hugohzxu.github.io/hugo-ui/](https://hugohzxu.github.io/hugo-ui/)         |
+| Vue Storybook   | [https://hugohzxu.github.io/hugo-ui/vue/](https://hugohzxu.github.io/hugo-ui/vue/) |
 
 ## Package Layout
 
@@ -23,7 +28,9 @@ hugo-ui/
   packages/
     mui/
     shadcn/
+    shadcn-vue/
     storybook/
+    storybook-vue/
 ```
 
 ## Usage
@@ -44,6 +51,7 @@ pnpm run typecheck
 pnpm run test:all
 pnpm run build:all
 pnpm run storybook
+pnpm run storybook-vue
 ```
 
 ## AI Agent Workflow

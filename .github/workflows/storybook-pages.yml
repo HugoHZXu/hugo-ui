@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build Storybook
+    name: Build Storybooks
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,16 +34,27 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Storybook
+      - name: Build React Storybook
         run: pnpm run build-storybook
+
+      - name: Build Vue Storybook
+        run: pnpm run build-storybook-vue
+
+      - name: Assemble Pages site
+        run: |
+          rm -rf pages-site
+          mkdir -p pages-site/vue
+          cp -R packages/storybook/storybook-static/. pages-site/
+          cp -R packages/storybook-vue/storybook-static/. pages-site/vue/
+          touch pages-site/.nojekyll
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
 
-      - name: Upload Storybook artifact
+      - name: Upload Storybooks artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: packages/storybook/storybook-static
+          path: pages-site
 
   deploy:
     name: Deploy to GitHub Pages
@@ -56,6 +67,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy Storybook
+      - name: Deploy Storybooks
         id: deployment
         uses: actions/deploy-pages@v5
