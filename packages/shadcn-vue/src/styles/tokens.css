@@ -144,7 +144,10 @@
   --color-hugo-text-disabled: var(--hugo-ui-shadcn-text-disabled);
   --color-hugo-surface-default: var(--hugo-ui-shadcn-surface-default);
   --color-hugo-surface-subtle: var(--hugo-ui-shadcn-surface-subtle);
+  --color-hugo-surface-inverse: var(--hugo-ui-shadcn-surface-inverse);
   --color-hugo-surface-tinted: var(--hugo-ui-shadcn-surface-tinted);
+  --color-hugo-border-default: var(--hugo-ui-shadcn-border-default);
+  --color-hugo-border-strong: var(--hugo-ui-shadcn-border-strong);
   --color-hugo-neutral-200: var(--hugo-ui-shadcn-neutral-grey-200);
   --color-hugo-neutral-500: var(--hugo-ui-shadcn-neutral-grey-500);
   --color-hugo-neutral-800: var(--hugo-ui-shadcn-neutral-grey-800);

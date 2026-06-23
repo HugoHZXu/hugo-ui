@@ -10,6 +10,17 @@ const buttonRowStyle = {
   rowGap: '12px',
 };
 
+const darkCanvasStyle = {
+  alignItems: 'center',
+  background: 'var(--hugo-ui-shadcn-surface-inverse)',
+  boxSizing: 'border-box',
+  display: 'flex',
+  justifyContent: 'center',
+  minHeight: '100vh',
+  padding: '48px',
+  width: '100%',
+};
+
 const meta = {
   title: 'Hugo UI Shadcn Vue/Atoms/Button',
   component: Button,
@@ -149,21 +160,20 @@ export const Destructive: Story = {
 
 export const OnDark: Story = {
   parameters: {
-    backgrounds: {
-      default: 'dark',
-      values: [{ name: 'dark', value: '#444' }],
-    },
+    layout: 'fullscreen',
   },
   render: (args) => ({
     components: { Button },
     setup() {
-      return { args, buttonRowStyle };
+      return { args, buttonRowStyle, darkCanvasStyle };
     },
     template: `
-      <div :style="buttonRowStyle">
-        <Button v-bind="args" tone="inverse" variant="solid">Solid</Button>
-        <Button v-bind="args" tone="inverse" variant="outline">Outline</Button>
-        <Button v-bind="args" tone="inverse" variant="ghost">Ghost</Button>
+      <div :style="darkCanvasStyle">
+        <div :style="buttonRowStyle">
+          <Button v-bind="args" tone="inverse" variant="solid">Solid</Button>
+          <Button v-bind="args" tone="inverse" variant="outline">Outline</Button>
+          <Button v-bind="args" tone="inverse" variant="ghost">Ghost</Button>
+        </div>
       </div>
     `,
   }),
