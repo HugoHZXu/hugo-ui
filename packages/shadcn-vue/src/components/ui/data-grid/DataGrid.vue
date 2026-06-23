@@ -20,11 +20,17 @@ import {
 } from 'vue';
 
 import { cn } from '@/components/lib/utils';
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
+import type { CheckboxModelValue } from '@/components/ui/checkbox/checkbox';
 import {
+  DEFAULT_CHECKBOX_COLUMN_MAX_WIDTH,
+  DEFAULT_CHECKBOX_COLUMN_MIN_WIDTH,
+  DEFAULT_CHECKBOX_COLUMN_WIDTH,
   DEFAULT_COLUMN_MAX_WIDTH,
   DEFAULT_COLUMN_MIN_WIDTH,
   DEFAULT_COLUMN_WIDTH,
   DEFAULT_EMPTY_STATE,
+  DEFAULT_END_REACHED_THRESHOLD,
   DEFAULT_GRID_HEIGHT,
   DEFAULT_ROW_HEIGHT,
   KEYBOARD_RESIZE_STEP,
@@ -41,11 +47,17 @@ defineOptions({
 const props = withDefaults(defineProps<DataGridProps<T>>(), {
   as: 'div',
   empty: DEFAULT_EMPTY_STATE,
+  endReachedThreshold: DEFAULT_END_REACHED_THRESHOLD,
   height: DEFAULT_GRID_HEIGHT,
+  hasMore: true,
   loading: false,
+  loadingMore: false,
   overscan: 8,
   rowHeight: DEFAULT_ROW_HEIGHT,
   selectedRowId: undefined,
+  selectedRowIds: undefined,
+  showCheckboxColumn: false,
+  showHeaderCheckbox: true,
   sort: null,
 });
 
@@ -63,25 +75,31 @@ const isColumnResizing = ref(false);
 const resizingColumnId = ref<string | null>(null);
 const resizeStartX = ref(0);
 const resizeStartWidth = ref(0);
+const internalSelectedRowIds = ref<string[]>(normalizeUniqueRowIds(props.selectedRowIds ?? []));
+const endReachedScrollHeight = ref<number | null>(null);
 
-const columnSizingState = computed(
-  () => props.columnSizing?.widths ?? internalColumnSizing.value
-);
+const columnSizingState = computed(() => props.columnSizing?.widths ?? internalColumnSizing.value);
 
 const rootClassName = computed(() =>
-  cn('w-full text-hugo-text-default', isColumnResizing.value && 'select-none', props.class, attrs.class)
+  cn(
+    'w-full text-hugo-text-default',
+    isColumnResizing.value && 'select-none',
+    props.class,
+    attrs.class
+  )
 );
 
 const viewportStyle = computed(() => ({
   height: typeof props.height === 'number' ? `${props.height}px` : props.height,
 }));
 
-const tableColumns = computed<ColumnDef<T>[]>(() =>
-  props.columns.map((column) => ({
+const tableColumns = computed<ColumnDef<T>[]>(() => {
+  const columns = props.columns.map((column) => ({
     id: column.id,
     header: () => column.header,
     cell: (info) => column.render(info.row.original),
-    size: columnSizingState.value[column.id] ?? column.width ?? column.minWidth ?? DEFAULT_COLUMN_WIDTH,
+    size:
+      columnSizingState.value[column.id] ?? column.width ?? column.minWidth ?? DEFAULT_COLUMN_WIDTH,
     minSize: column.minWidth ?? DEFAULT_COLUMN_MIN_WIDTH,
     maxSize: column.maxWidth ?? DEFAULT_COLUMN_MAX_WIDTH,
     enableResizing: column.resizable ?? true,
@@ -91,8 +109,10 @@ const tableColumns = computed<ColumnDef<T>[]>(() =>
       label: typeof column.header === 'string' ? column.header : column.id,
       sortable: column.sortable ?? false,
     },
-  }))
-);
+  })) satisfies ColumnDef<T>[];
+
+  return props.showCheckboxColumn ? [createCheckboxColumn(), ...columns] : columns;
+});
 
 const table = useVueTable({
   get data() {
@@ -116,6 +136,26 @@ const table = useVueTable({
 
 const visibleColumns = computed(() => table.getVisibleLeafColumns());
 const tableRows = computed(() => table.getRowModel().rows);
+const currentRowIds = computed(() => tableRows.value.map((row) => row.id));
+const checkboxSelectedRowIds = computed(() =>
+  props.selectedRowIds !== undefined ? props.selectedRowIds : internalSelectedRowIds.value
+);
+const checkboxSelectedRowIdSet = computed(() => new Set(checkboxSelectedRowIds.value));
+const headerCheckboxValue = computed<CheckboxModelValue>(() => {
+  if (currentRowIds.value.length === 0) {
+    return false;
+  }
+
+  const selectedCount = currentRowIds.value.filter((rowId) =>
+    checkboxSelectedRowIdSet.value.has(rowId)
+  ).length;
+
+  if (selectedCount === 0) {
+    return false;
+  }
+
+  return selectedCount === currentRowIds.value.length ? true : 'indeterminate';
+});
 const tableWidth = computed(() => table.getTotalSize());
 const tableWidthStyle = computed(() => ({
   minWidth: `${tableWidth.value}px`,
@@ -146,6 +186,13 @@ const virtualRows = computed(() =>
   })
 );
 const skeletonRows = computed(() => Math.min(props.pagination?.pageSize ?? 8, 10));
+const shouldRenderLoadingMore = computed(
+  () => props.loadingMore && !props.loading && !props.error && props.rows.length > 0
+);
+const ariaRowCount = computed(
+  () => props.rows.length + 1 + (shouldRenderLoadingMore.value ? 1 : 0)
+);
+const hasEndReachedListener = computed(() => Boolean(instance?.vnode.props?.onEndReached));
 const hasSortChangeListener = computed(() => Boolean(instance?.vnode.props?.onSortChange));
 const isRowInteractive = computed(() =>
   Boolean(instance?.vnode.props?.onRowClick || instance?.vnode.props?.onSelectedRowIdChange)
@@ -169,7 +216,7 @@ const canGoPrevious = computed(() => Boolean(props.pagination && props.paginatio
 const canGoNext = computed(() =>
   Boolean(
     props.pagination &&
-      (props.pagination.page + 1) * props.pagination.pageSize < props.pagination.total
+    (props.pagination.page + 1) * props.pagination.pageSize < props.pagination.total
   )
 );
 
@@ -186,6 +233,22 @@ watch(
     }
   },
   { deep: true }
+);
+
+watch(
+  () => props.selectedRowIds,
+  (selectedRowIds) => {
+    if (selectedRowIds !== undefined) {
+      internalSelectedRowIds.value = normalizeUniqueRowIds(selectedRowIds);
+    }
+  }
+);
+
+watch(
+  () => props.rows.length,
+  () => {
+    endReachedScrollHeight.value = null;
+  }
 );
 
 watch(
@@ -271,8 +334,59 @@ function getStretchGridTemplateColumns(columnSizes: number[]) {
 
 function getColumnMeta(column: { columnDef: { meta?: unknown } }) {
   return column.columnDef.meta as
-    | { align?: 'left' | 'center' | 'right'; label?: string; sortable?: boolean }
+    | {
+        align?: 'left' | 'center' | 'right';
+        label?: string;
+        selectable?: boolean;
+        sortable?: boolean;
+      }
     | undefined;
+}
+
+function createCheckboxColumn(): ColumnDef<T> {
+  return {
+    id: '__hugo-ui-data-grid-checkbox-selection',
+    header: () =>
+      props.showHeaderCheckbox
+        ? h(Checkbox, {
+            'aria-label':
+              headerCheckboxValue.value === true ? 'Clear row selection' : 'Select all rows',
+            classNames: {
+              root: 'justify-center',
+            },
+            disabled: currentRowIds.value.length === 0,
+            modelValue: headerCheckboxValue.value,
+            onClick: stopGridActivation,
+            onKeydown: stopGridActivation,
+            'onUpdate:modelValue': toggleAllRows,
+          })
+        : null,
+    cell: (info) => {
+      const rowId = info.row.id;
+
+      return h(Checkbox, {
+        'aria-label': `Select ${rowId}`,
+        classNames: {
+          root: 'justify-center',
+        },
+        modelValue: checkboxSelectedRowIdSet.value.has(rowId),
+        onClick: stopGridActivation,
+        onKeydown: stopGridActivation,
+        'onUpdate:modelValue': () => toggleRowSelection(info.row.original),
+      });
+    },
+    enableResizing: true,
+    enableSorting: false,
+    minSize: DEFAULT_CHECKBOX_COLUMN_MIN_WIDTH,
+    maxSize: DEFAULT_CHECKBOX_COLUMN_MAX_WIDTH,
+    size: DEFAULT_CHECKBOX_COLUMN_WIDTH,
+    meta: {
+      align: 'center',
+      label: 'Row selection',
+      selectable: true,
+      sortable: false,
+    },
+  };
 }
 
 function getAlignmentClassName(align?: 'left' | 'center' | 'right') {
@@ -291,6 +405,52 @@ function renderValue(value: unknown) {
   return typeof value === 'function' ? value() : value;
 }
 
+function normalizeUniqueRowIds(rowIds: string[]) {
+  return Array.from(new Set(rowIds));
+}
+
+function setSelectedRowIds(rowIds: string[]) {
+  const nextRowIds = normalizeUniqueRowIds(rowIds);
+
+  if (props.selectedRowIds === undefined) {
+    internalSelectedRowIds.value = nextRowIds;
+  }
+
+  emit('selectedRowIdsChange', nextRowIds);
+}
+
+function toggleAllRows() {
+  const currentIds = new Set(currentRowIds.value);
+
+  if (currentIds.size === 0) {
+    return;
+  }
+
+  if (headerCheckboxValue.value === true) {
+    setSelectedRowIds(checkboxSelectedRowIds.value.filter((rowId) => !currentIds.has(rowId)));
+    return;
+  }
+
+  setSelectedRowIds([...checkboxSelectedRowIds.value, ...currentRowIds.value]);
+}
+
+function toggleRowSelection(row: T) {
+  const rowId = props.getRowId(row);
+
+  if (checkboxSelectedRowIdSet.value.has(rowId)) {
+    setSelectedRowIds(
+      checkboxSelectedRowIds.value.filter((selectedRowId) => selectedRowId !== rowId)
+    );
+    return;
+  }
+
+  setSelectedRowIds([...checkboxSelectedRowIds.value, rowId]);
+}
+
+function stopGridActivation(event: Event) {
+  event.stopPropagation();
+}
+
 function measureViewport() {
   if (!viewportRef.value) {
     viewportHeight.value = resolveNumericHeight(props.height);
@@ -301,7 +461,37 @@ function measureViewport() {
 }
 
 function handleScroll(event: Event) {
-  scrollTop.value = (event.currentTarget as HTMLElement).scrollTop;
+  const viewport = event.currentTarget as HTMLElement;
+
+  scrollTop.value = viewport.scrollTop;
+  maybeEmitEndReached(viewport);
+}
+
+function maybeEmitEndReached(viewport: HTMLElement) {
+  if (
+    !hasEndReachedListener.value ||
+    props.loading ||
+    props.loadingMore ||
+    props.hasMore === false ||
+    props.rows.length === 0
+  ) {
+    return;
+  }
+
+  const threshold = Math.max(0, props.endReachedThreshold);
+  const distanceToEnd = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+
+  if (distanceToEnd > threshold) {
+    endReachedScrollHeight.value = null;
+    return;
+  }
+
+  if (endReachedScrollHeight.value === viewport.scrollHeight) {
+    return;
+  }
+
+  endReachedScrollHeight.value = viewport.scrollHeight;
+  emit('endReached');
 }
 
 function resizeColumnBy(columnId: string, offset: number) {
@@ -422,7 +612,7 @@ function handleSort(columnId: string) {
         ref="viewportRef"
         :aria-colcount="visibleColumns.length"
         :aria-label="ariaLabel"
-        :aria-rowcount="rows.length + 1"
+        :aria-rowcount="ariaRowCount"
         class="relative overflow-auto bg-hugo-surface-default"
         role="grid"
         :style="viewportStyle"
@@ -499,7 +689,9 @@ function handleSort(columnId: string) {
                   :aria-valuemin="header.column.columnDef.minSize"
                   :aria-valuenow="header.column.getSize()"
                   class="absolute inset-y-0 right-0 w-2 cursor-col-resize touch-none outline-none after:absolute after:inset-y-2 after:right-0 after:w-0.5 after:bg-hugo-neutral-800 after:opacity-0 hover:after:opacity-100 focus-visible:after:bg-hugo-focus focus-visible:after:opacity-100"
-                  :class="resizingColumnId === header.column.id && 'after:bg-hugo-focus after:opacity-100'"
+                  :class="
+                    resizingColumnId === header.column.id && 'after:bg-hugo-focus after:opacity-100'
+                  "
                   role="separator"
                   tabindex="0"
                   @click.stop
@@ -507,23 +699,18 @@ function handleSort(columnId: string) {
                   @touchstart="startPointerResize($event, header.column.id)"
                   @keydown="
                     ($event.key === 'ArrowLeft' || $event.key === 'ArrowRight') &&
-                      ($event.preventDefault(),
-                      resizeColumnBy(
-                        header.column.id,
-                        $event.key === 'ArrowRight' ? KEYBOARD_RESIZE_STEP : -KEYBOARD_RESIZE_STEP
-                      ))
+                    ($event.preventDefault(),
+                    resizeColumnBy(
+                      header.column.id,
+                      $event.key === 'ArrowRight' ? KEYBOARD_RESIZE_STEP : -KEYBOARD_RESIZE_STEP
+                    ))
                   "
                 />
               </div>
             </div>
           </div>
 
-          <div
-            v-if="loading"
-            class="grid min-w-full"
-            role="rowgroup"
-            :style="tableWidthStyle"
-          >
+          <div v-if="loading" class="grid min-w-full" role="rowgroup" :style="tableWidthStyle">
             <div
               v-for="rowIndex in skeletonRows"
               :key="`loading-${rowIndex}`"
@@ -598,6 +785,28 @@ function handleSort(columnId: string) {
                   <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                 </span>
               </div>
+            </div>
+          </div>
+
+          <div
+            v-if="shouldRenderLoadingMore"
+            :aria-rowindex="rows.length + 2"
+            class="grid border-b border-hugo-neutral-500"
+            role="row"
+            :style="{ ...tableWidthStyle, gridTemplateColumns, height: `${rowHeight}px` }"
+          >
+            <div
+              :aria-colspan="visibleColumns.length"
+              aria-label="Loading more rows"
+              class="box-border flex h-full items-center justify-center gap-2 bg-hugo-surface-default px-4 text-sm leading-5 text-hugo-text-subtle"
+              role="gridcell"
+              :style="{ gridColumn: `1 / span ${Math.max(visibleColumns.length, 1)}` }"
+            >
+              <span
+                aria-hidden="true"
+                class="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+              />
+              <span>Loading more</span>
             </div>
           </div>
         </div>

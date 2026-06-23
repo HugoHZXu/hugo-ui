@@ -38,21 +38,29 @@ export type DataGridProps<T> = {
   columns: DataGridColumn<T>[];
   columnSizing?: DataGridColumnSizing;
   empty?: string | VNode;
+  endReachedThreshold?: number;
   error?: string | VNode;
   getRowId: (row: T) => string;
+  hasMore?: boolean;
   height?: number | string;
   loading?: boolean;
+  loadingMore?: boolean;
   overscan?: number;
   pagination?: DataGridPagination;
   rowHeight?: number;
   rows: T[];
   selectedRowId?: string;
+  selectedRowIds?: string[];
+  showCheckboxColumn?: boolean;
+  showHeaderCheckbox?: boolean;
   sort?: DataGridSort;
 };
 
 export type DataGridEmits<T> = {
   (event: 'rowClick', row: T): void;
   (event: 'selectedRowIdChange', rowId: string, row: T): void;
+  (event: 'selectedRowIdsChange', rowIds: string[]): void;
+  (event: 'endReached'): void;
   (event: 'sortChange', sort: DataGridSort): void;
   (event: 'pageChange', page: number): void;
   (event: 'pageSizeChange', pageSize: number): void;
@@ -60,9 +68,13 @@ export type DataGridEmits<T> = {
 };
 
 export const DEFAULT_EMPTY_STATE = 'No results found.';
+export const DEFAULT_END_REACHED_THRESHOLD = 96;
 export const DEFAULT_GRID_HEIGHT = 420;
 export const DEFAULT_ROW_HEIGHT = 52;
 export const DEFAULT_COLUMN_WIDTH = 160;
 export const DEFAULT_COLUMN_MIN_WIDTH = 80;
 export const DEFAULT_COLUMN_MAX_WIDTH = 800;
+export const DEFAULT_CHECKBOX_COLUMN_WIDTH = 80;
+export const DEFAULT_CHECKBOX_COLUMN_MIN_WIDTH = 72;
+export const DEFAULT_CHECKBOX_COLUMN_MAX_WIDTH = 160;
 export const KEYBOARD_RESIZE_STEP = 16;

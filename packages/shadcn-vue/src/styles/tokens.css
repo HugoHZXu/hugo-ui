@@ -87,6 +87,16 @@
     var(--hugo-ui-shadcn-brand-deep) 40%,
     transparent
   );
+  --hugo-ui-shadcn-checkbox-hover: color-mix(
+    in oklab,
+    var(--hugo-ui-shadcn-brand-accent) 10%,
+    transparent
+  );
+  --hugo-ui-shadcn-checkbox-active: color-mix(
+    in oklab,
+    var(--hugo-ui-shadcn-brand-accent) 30%,
+    transparent
+  );
   --hugo-ui-shadcn-shadow-medium:
     0 8px 16px color-mix(in oklab, var(--hugo-ui-shadcn-text-primary) 12%, transparent),
     0 24px 48px color-mix(in oklab, var(--hugo-ui-shadcn-text-primary) 18%, transparent);

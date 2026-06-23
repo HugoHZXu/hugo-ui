@@ -1,3 +1,7 @@
 .hugo-ui-shadcn-vue-button {
   -webkit-tap-highlight-color: transparent;
 }
+
+.hugo-ui-shadcn-vue-checkbox-control {
+  -webkit-tap-highlight-color: transparent;
+}

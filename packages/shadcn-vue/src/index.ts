@@ -20,6 +20,15 @@ export type {
   InputSlotProps,
   InputStatus,
 } from './components/ui/input/input';
+export { default as Checkbox } from './components/ui/checkbox/Checkbox.vue';
+export type {
+  CheckboxClassNames,
+  CheckboxEmits,
+  CheckboxModelValue,
+  CheckboxProps,
+  CheckboxSlotAttributes,
+  CheckboxSlotProps,
+} from './components/ui/checkbox/checkbox';
 export { default as Card } from './components/ui/card/Card.vue';
 export { default as CardAction } from './components/ui/card/CardAction.vue';
 export { default as CardContent } from './components/ui/card/CardContent.vue';

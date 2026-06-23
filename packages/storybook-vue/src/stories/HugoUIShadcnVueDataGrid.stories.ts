@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
-import { computed, h, ref } from 'vue';
+import { computed, h, onBeforeUnmount, ref } from 'vue';
 import { Badge, DataGrid } from '@hugo-ui/shadcn-vue';
 import type { DataGridColumn, DataGridColumnSizing, DataGridSort } from '@hugo-ui/shadcn-vue';
 
@@ -35,6 +35,7 @@ const createEntries = (count: number): ExampleEntry[] =>
 
 const entries = createEntries(42);
 const longEntries = createEntries(2000);
+const infiniteEntries = createEntries(120);
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat(undefined, {
@@ -152,10 +153,16 @@ const meta = {
     height: 420,
     rowHeight: 52,
     overscan: 8,
+    endReachedThreshold: 96,
+    hasMore: true,
     loading: false,
+    loadingMore: false,
     empty: 'No results found.',
     error: undefined,
     selectedRowId: undefined,
+    selectedRowIds: [],
+    showCheckboxColumn: false,
+    showHeaderCheckbox: true,
     sort: null,
   },
   argTypes: {
@@ -166,7 +173,8 @@ const meta = {
     },
     columns: {
       control: false,
-      description: 'Column definitions. Set `sortable: true` on a column to make it sortable when `@sort-change` is provided.',
+      description:
+        'Column definitions. Set `sortable: true` on a column to make it sortable when `@sort-change` is provided.',
       table: { type: { summary: 'DataGridColumn<T>[]' } },
     },
     rows: {
@@ -194,6 +202,16 @@ const meta = {
       description: 'Extra rows rendered above and below the viewport.',
       table: { type: { summary: 'number' }, defaultValue: { summary: '8' } },
     },
+    endReachedThreshold: {
+      control: { type: 'number' },
+      description: 'Distance from the scroll end, in pixels, before `endReached` fires.',
+      table: { type: { summary: 'number' }, defaultValue: { summary: '96' } },
+    },
+    hasMore: {
+      control: { type: 'boolean' },
+      description: 'Allows `endReached` to fire while more rows are available.',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'true' } },
+    },
     columnSizing: {
       control: false,
       description: 'Controlled or default column width options.',
@@ -201,7 +219,8 @@ const meta = {
     },
     sort: {
       control: false,
-      description: 'Controlled sort state. Sorting is interactive only when `@sort-change` is provided.',
+      description:
+        'Controlled sort state. Sorting is interactive only when `@sort-change` is provided.',
       table: { type: { summary: 'DataGridSort' }, defaultValue: { summary: 'null' } },
     },
     pagination: {
@@ -214,15 +233,38 @@ const meta = {
       description: 'Current selected row id.',
       table: { type: { summary: 'string' } },
     },
+    selectedRowIds: {
+      control: false,
+      description: 'Checked row ids for the optional checkbox column.',
+      table: { type: { summary: 'string[]' } },
+    },
+    showCheckboxColumn: {
+      control: { type: 'boolean' },
+      description: 'Shows the checkbox selection column as the first column.',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+    },
+    showHeaderCheckbox: {
+      control: { type: 'boolean' },
+      description: 'Shows the select-all checkbox in the checkbox column header.',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'true' } },
+    },
     loading: {
       control: { type: 'boolean' },
       description: 'Shows loading skeleton rows.',
       table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
     },
+    loadingMore: {
+      control: { type: 'boolean' },
+      description: 'Shows a bottom loading row and suppresses additional `endReached` events.',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+    },
     empty: {
       control: { type: 'text' },
       description: 'Empty state content.',
-      table: { type: { summary: 'string | VNode' }, defaultValue: { summary: 'No results found.' } },
+      table: {
+        type: { summary: 'string | VNode' },
+        defaultValue: { summary: 'No results found.' },
+      },
     },
     error: {
       control: { type: 'text' },
@@ -258,6 +300,16 @@ const meta = {
       action: 'selected-row-id-change',
       description: 'Fired when an interactive row is selected.',
       table: { category: 'events', type: { summary: '(rowId: string, row: T) => void' } },
+    },
+    onSelectedRowIdsChange: {
+      action: 'selected-row-ids-change',
+      description: 'Fired when the checkbox column selection changes.',
+      table: { category: 'events', type: { summary: '(rowIds: string[]) => void' } },
+    },
+    onEndReached: {
+      action: 'end-reached',
+      description: 'Fired when scrolling close to the end while `hasMore` is true.',
+      table: { category: 'events', type: { summary: '() => void' } },
     },
     onRowClick: {
       action: 'row-click',
@@ -420,6 +472,60 @@ export const Selectable: Story = {
   }),
 };
 
+export const CheckboxSelection: Story = {
+  render: () => ({
+    components: { DataGrid },
+    setup() {
+      const selectedRowId = ref('entry-2');
+      const selectedRowIds = ref(['entry-1', 'entry-3']);
+
+      return { columns, entries, previewStyle, selectedRowId, selectedRowIds };
+    },
+    template: `
+      <div :style="previewStyle">
+        <DataGrid
+          aria-label="Checkbox selectable entries"
+          :columns="columns"
+          :rows="entries.slice(0, 12)"
+          :get-row-id="(row) => row.id"
+          :height="420"
+          :selected-row-id="selectedRowId"
+          :selected-row-ids="selectedRowIds"
+          show-checkbox-column
+          @selected-row-id-change="selectedRowId = $event"
+          @selected-row-ids-change="selectedRowIds = $event"
+        />
+      </div>
+    `,
+  }),
+};
+
+export const CheckboxSelectionWithoutHeader: Story = {
+  render: () => ({
+    components: { DataGrid },
+    setup() {
+      const selectedRowIds = ref(['entry-1', 'entry-3']);
+
+      return { columns, entries, previewStyle, selectedRowIds };
+    },
+    template: `
+      <div :style="previewStyle">
+        <DataGrid
+          aria-label="Checkbox selectable entries without select all"
+          :columns="columns"
+          :rows="entries.slice(0, 12)"
+          :get-row-id="(row) => row.id"
+          :height="420"
+          :selected-row-ids="selectedRowIds"
+          show-checkbox-column
+          :show-header-checkbox="false"
+          @selected-row-ids-change="selectedRowIds = $event"
+        />
+      </div>
+    `,
+  }),
+};
+
 export const LongList: Story = {
   render: () => ({
     components: { DataGrid },
@@ -436,6 +542,55 @@ export const LongList: Story = {
           :height="520"
           :row-height="52"
           :overscan="8"
+        />
+      </div>
+    `,
+  }),
+};
+
+export const InfiniteScrollMock: Story = {
+  render: () => ({
+    components: { DataGrid },
+    setup() {
+      const pageSize = 18;
+      const visibleCount = ref(24);
+      const loadingMore = ref(false);
+      const timeoutId = ref<number>();
+      const visibleRows = computed(() => infiniteEntries.slice(0, visibleCount.value));
+      const hasMore = computed(() => visibleRows.value.length < infiniteEntries.length);
+
+      const handleEndReached = () => {
+        if (loadingMore.value || !hasMore.value) {
+          return;
+        }
+
+        loadingMore.value = true;
+        timeoutId.value = window.setTimeout(() => {
+          visibleCount.value = Math.min(visibleCount.value + pageSize, infiniteEntries.length);
+          loadingMore.value = false;
+        }, 500);
+      };
+
+      onBeforeUnmount(() => {
+        if (timeoutId.value !== undefined) {
+          window.clearTimeout(timeoutId.value);
+        }
+      });
+
+      return { columns, hasMore, handleEndReached, loadingMore, previewStyle, visibleRows };
+    },
+    template: `
+      <div :style="previewStyle">
+        <DataGrid
+          aria-label="Infinite mock entries"
+          :columns="columns"
+          :rows="visibleRows"
+          :get-row-id="(row) => row.id"
+          :height="420"
+          :end-reached-threshold="120"
+          :has-more="hasMore"
+          :loading-more="loadingMore"
+          @end-reached="handleEndReached"
         />
       </div>
     `,

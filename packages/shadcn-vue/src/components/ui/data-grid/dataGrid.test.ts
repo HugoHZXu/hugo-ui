@@ -2,7 +2,13 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 
 import DataGrid from './DataGrid.vue';
-import type { DataGridColumn, DataGridSort } from './dataGrid';
+import {
+  DEFAULT_CHECKBOX_COLUMN_MIN_WIDTH,
+  DEFAULT_CHECKBOX_COLUMN_WIDTH,
+  KEYBOARD_RESIZE_STEP,
+  type DataGridColumn,
+  type DataGridSort,
+} from './dataGrid';
 
 type ExampleRow = {
   id: string;
@@ -55,6 +61,25 @@ const mountDataGrid = (props: Record<string, unknown> = {}) =>
     },
   });
 
+const setScrollMetrics = (
+  element: HTMLElement,
+  metrics: { clientHeight: number; scrollHeight: number; scrollTop: number }
+) => {
+  Object.defineProperty(element, 'clientHeight', {
+    configurable: true,
+    value: metrics.clientHeight,
+  });
+  Object.defineProperty(element, 'scrollHeight', {
+    configurable: true,
+    value: metrics.scrollHeight,
+  });
+  Object.defineProperty(element, 'scrollTop', {
+    configurable: true,
+    value: metrics.scrollTop,
+    writable: true,
+  });
+};
+
 describe('DataGrid', () => {
   it('renders headers and visible row cells', () => {
     const wrapper = mountDataGrid();
@@ -84,7 +109,9 @@ describe('DataGrid', () => {
     await wrapper.get('[role="columnheader"] button').trigger('click');
     expect(onSortChange).toHaveBeenCalledWith({ columnId: 'label', direction: 'asc' });
 
-    await wrapper.setProps({ sort: { columnId: 'label', direction: 'asc' } satisfies DataGridSort });
+    await wrapper.setProps({
+      sort: { columnId: 'label', direction: 'asc' } satisfies DataGridSort,
+    });
     await wrapper.get('[role="columnheader"] button').trigger('click');
     expect(onSortChange).toHaveBeenLastCalledWith({ columnId: 'label', direction: 'desc' });
   });
@@ -99,6 +126,63 @@ describe('DataGrid', () => {
 
     expect(wrapper.text()).toContain('Item 1');
     expect(wrapper.text()).not.toContain('Item 200');
+  });
+
+  it('emits endReached near the bottom and suppresses duplicate loading triggers', async () => {
+    const onEndReached = vi.fn();
+    const wrapper = mountDataGrid({
+      endReachedThreshold: 80,
+      onEndReached,
+      rows: createRows(20),
+    });
+    const viewport = wrapper.get('[role="grid"]');
+
+    setScrollMetrics(viewport.element as HTMLElement, {
+      clientHeight: 400,
+      scrollHeight: 1000,
+      scrollTop: 500,
+    });
+    await viewport.trigger('scroll');
+    expect(onEndReached).not.toHaveBeenCalled();
+
+    setScrollMetrics(viewport.element as HTMLElement, {
+      clientHeight: 400,
+      scrollHeight: 1000,
+      scrollTop: 530,
+    });
+    await viewport.trigger('scroll');
+    expect(onEndReached).toHaveBeenCalledTimes(1);
+
+    await viewport.trigger('scroll');
+    expect(onEndReached).toHaveBeenCalledTimes(1);
+
+    await wrapper.setProps({ loadingMore: true });
+    expect(wrapper.get('[aria-label="Loading more rows"]').text()).toContain('Loading more');
+    setScrollMetrics(viewport.element as HTMLElement, {
+      clientHeight: 400,
+      scrollHeight: 1200,
+      scrollTop: 730,
+    });
+    await viewport.trigger('scroll');
+    expect(onEndReached).toHaveBeenCalledTimes(1);
+
+    await wrapper.setProps({ loadingMore: false, rows: createRows(30) });
+    setScrollMetrics(viewport.element as HTMLElement, {
+      clientHeight: 400,
+      scrollHeight: 1500,
+      scrollTop: 1030,
+    });
+    await viewport.trigger('scroll');
+    expect(onEndReached).toHaveBeenCalledTimes(2);
+
+    await wrapper.setProps({ hasMore: false });
+    setScrollMetrics(viewport.element as HTMLElement, {
+      clientHeight: 400,
+      scrollHeight: 1800,
+      scrollTop: 1330,
+    });
+    await viewport.trigger('scroll');
+    expect(onEndReached).toHaveBeenCalledTimes(2);
   });
 
   it('renders loading, empty, and error states', async () => {
@@ -154,5 +238,92 @@ describe('DataGrid', () => {
 
     await firstRow!.trigger('keydown', { key: 'Enter' });
     expect(onSelectedRowIdChange).toHaveBeenCalledTimes(2);
+  });
+
+  it('renders optional checkbox selection and keeps checkbox events separate from row activation', async () => {
+    const onSelectedRowIdsChange = vi.fn();
+    const onSelectedRowIdChange = vi.fn();
+    const onRowClick = vi.fn();
+    const onColumnWidthsChange = vi.fn();
+    const wrapper = mountDataGrid({
+      onColumnWidthsChange,
+      onRowClick,
+      onSelectedRowIdChange,
+      onSelectedRowIdsChange,
+      selectedRowIds: ['item-2'],
+      showCheckboxColumn: true,
+    });
+
+    const checkboxControls = () => wrapper.findAll('[data-slot="checkbox-control"]');
+    const headerCheckbox = () => checkboxControls()[0];
+    const firstRowCheckbox = () => checkboxControls()[1];
+    const allRowIds = rows.map((row) => row.id);
+
+    expect(wrapper.findAll('[role="columnheader"]')).toHaveLength(columns.length + 1);
+    const checkboxResizeHandle = wrapper.get(
+      '[aria-label="Resize __hugo-ui-data-grid-checkbox-selection column"]'
+    );
+    expect(checkboxResizeHandle.attributes('aria-valuemin')).toBe(
+      String(DEFAULT_CHECKBOX_COLUMN_MIN_WIDTH)
+    );
+    expect(checkboxResizeHandle.attributes('aria-valuenow')).toBe(
+      String(DEFAULT_CHECKBOX_COLUMN_WIDTH)
+    );
+    expect(headerCheckbox().attributes('aria-checked')).toBe('mixed');
+
+    await checkboxResizeHandle.trigger('keydown', { key: 'ArrowRight' });
+    expect(onColumnWidthsChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        '__hugo-ui-data-grid-checkbox-selection':
+          DEFAULT_CHECKBOX_COLUMN_WIDTH + KEYBOARD_RESIZE_STEP,
+      })
+    );
+
+    await firstRowCheckbox().trigger('click');
+    expect(onSelectedRowIdsChange).toHaveBeenCalledWith(['item-2', 'item-1']);
+    expect(onSelectedRowIdChange).not.toHaveBeenCalled();
+    expect(onRowClick).not.toHaveBeenCalled();
+
+    await firstRowCheckbox().trigger('keydown', { key: ' ' });
+    expect(onSelectedRowIdChange).not.toHaveBeenCalled();
+    expect(onRowClick).not.toHaveBeenCalled();
+
+    await wrapper.setProps({ selectedRowIds: ['item-2'] });
+    await headerCheckbox().trigger('click');
+    expect(onSelectedRowIdsChange).toHaveBeenLastCalledWith([
+      'item-2',
+      ...allRowIds.filter((id) => id !== 'item-2'),
+    ]);
+
+    await wrapper.setProps({ selectedRowIds: [...allRowIds, 'outside-row'] });
+    expect(headerCheckbox().attributes('aria-checked')).toBe('true');
+
+    await headerCheckbox().trigger('click');
+    expect(onSelectedRowIdsChange).toHaveBeenLastCalledWith(['outside-row']);
+  });
+
+  it('can hide the checkbox column header control while keeping row checkboxes', async () => {
+    const onSelectedRowIdsChange = vi.fn();
+    const onSelectedRowIdChange = vi.fn();
+    const onRowClick = vi.fn();
+    const wrapper = mountDataGrid({
+      onRowClick,
+      onSelectedRowIdChange,
+      onSelectedRowIdsChange,
+      showCheckboxColumn: true,
+      showHeaderCheckbox: false,
+    });
+
+    const columnHeaders = wrapper.findAll('[role="columnheader"]');
+    expect(columnHeaders).toHaveLength(columns.length + 1);
+    expect(columnHeaders[0].find('[data-slot="checkbox-control"]').exists()).toBe(false);
+
+    const checkboxControls = wrapper.findAll('[data-slot="checkbox-control"]');
+    expect(checkboxControls[0].attributes('aria-label')).toBe('Select item-1');
+
+    await checkboxControls[0].trigger('click');
+    expect(onSelectedRowIdsChange).toHaveBeenCalledWith(['item-1']);
+    expect(onSelectedRowIdChange).not.toHaveBeenCalled();
+    expect(onRowClick).not.toHaveBeenCalled();
   });
 });
