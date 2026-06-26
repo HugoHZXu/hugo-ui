@@ -1,184 +1,30 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { loadPackageContractConfig, repoRoot } from '../context.mjs';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const muiPackagePath = 'packages/mui';
-const muiPackageJsonPath = `${muiPackagePath}/package.json`;
-const muiIndexPath = `${muiPackagePath}/src/index.ts`;
-const outputRoot = 'ai-contract/packages/mui';
-const componentOutputDir = `${outputRoot}/components`;
-const metadataDir = `${outputRoot}/metadata/components`;
-const tokenOutputDir = `${outputRoot}/tokens`;
-const isCheckMode = process.argv.includes('--check');
+const contractConfig = await loadPackageContractConfig();
+const muiPackagePath = contractConfig.sourcePackagePath;
+const muiPackageJsonPath = contractConfig.packageJsonPath ?? `${muiPackagePath}/package.json`;
+const muiIndexPath = contractConfig.publicEntry;
+const muiTsConfigPath = contractConfig.tsconfigPath ?? `${muiPackagePath}/tsconfig.json`;
+const muiSourceRoot = contractConfig.sourceRoot ?? `${muiPackagePath}/src`;
+const outputRoot = contractConfig.outputRoot;
+const componentOutputDir = contractConfig.componentOutputDir ?? `${outputRoot}/components`;
+const metadataDir = contractConfig.metadataDir ?? `${outputRoot}/metadata/components`;
+const tokenOutputDir = contractConfig.tokenOutputDir ?? `${outputRoot}/tokens`;
+const tokenContractPath = contractConfig.tokenContract ?? 'tokens/token-map.contract.json';
+const rawPalettePath =
+  contractConfig.tokenSources?.rawPalette ?? `${muiSourceRoot}/styles/color.ts`;
+const semanticColorRolesPath =
+  contractConfig.tokenSources?.semanticColorRoles ?? `${muiSourceRoot}/styles/colorRoles.ts`;
+const themePath = contractConfig.tokenSources?.theme ?? `${muiSourceRoot}/styles/theme.ts`;
+const semanticColorRolesExportName =
+  contractConfig.semanticColorRolesExportName ?? 'hugoUIColorRoles';
+const isCheckMode = process.env.HUGO_AI_CONTRACT_CHECK === '1' || process.argv.includes('--check');
 const volatileKeys = new Set(['generatedAt', 'sourceCommit']);
-
-const componentConfigs = [
-  {
-    componentName: 'Button',
-    importName: 'Button',
-    implementationName: 'HugoUIButton',
-    propsTypeName: 'HugoUIButtonProps',
-    sourceFile: 'packages/mui/src/Button/Button.tsx',
-    componentIndexFile: 'packages/mui/src/Button/index.ts',
-    sourceFiles: [
-      'packages/mui/src/Button/Button.tsx',
-      'packages/mui/src/Button/buttonTypes.ts',
-      'packages/mui/src/Button/index.ts',
-      'packages/mui/src/Button/styles/buttonTokens.ts',
-      'packages/mui/src/Button/button.test.tsx',
-      'packages/storybook/src/stories/Button.stories.tsx',
-    ],
-    directTypeNames: [
-      'HugoUIButtonProps',
-      'HugoUIButtonCommonProps',
-      'HugoUIButtonStyleProps',
-      'HugoUIPrimaryButtonStyleProps',
-      'HugoUIPrimaryButtonProps',
-      'HugoUISecondaryButtonStyleProps',
-      'HugoUISecondaryButtonProps',
-      'HugoUITertiaryButtonStyleProps',
-      'HugoUITertiaryButtonProps',
-      'HugoUIDestructButtonStyleProps',
-      'HugoUIDestructButtonProps',
-    ],
-    relatedTypes: [
-      'HugoUIButtonCommonProps',
-      'HugoUIPrimaryButtonProps',
-      'HugoUISecondaryButtonProps',
-      'HugoUITertiaryButtonProps',
-      'HugoUIDestructButtonProps',
-    ],
-    trackedProps: [
-      'children',
-      'level',
-      'colorTheme',
-      'size',
-      'loading',
-      'loadingPosition',
-      'labelHidden',
-      'disabled',
-      'startIcon',
-      'endIcon',
-      'fullWidth',
-      'type',
-      'onClick',
-      'href',
-      'target',
-      'rel',
-      'tabIndex',
-      'className',
-      'style',
-      'sx',
-      'component',
-    ],
-    typeFromValuesProps: ['level', 'colorTheme', 'size', 'loadingPosition'],
-  },
-  {
-    componentName: 'Input',
-    importName: 'Input',
-    implementationName: 'HugoUIInput',
-    propsTypeName: 'HugoUIInputProps',
-    sourceFile: 'packages/mui/src/Input/Input.tsx',
-    componentIndexFile: 'packages/mui/src/Input/index.ts',
-    sourceFiles: [
-      'packages/mui/src/Input/Input.tsx',
-      'packages/mui/src/Input/InputStatus.tsx',
-      'packages/mui/src/Input/index.ts',
-      'packages/mui/src/Input/styles/inputTokens.ts',
-      'packages/mui/src/Input/input.test.tsx',
-      'packages/storybook/src/stories/Input.stories.tsx',
-    ],
-    directTypeNames: ['HugoUIInputProps', 'HugoUIInputExtraProps', 'HugoUIInputCompatibilityProps'],
-    relatedTypes: ['HugoUIInputExtraProps', 'HugoUIInputCompatibilityProps'],
-    trackedProps: [
-      'id',
-      'label',
-      'value',
-      'helperText',
-      'extraMessage',
-      'color',
-      'mini',
-      'loading',
-      'showCount',
-      'multiline',
-      'required',
-      'disabled',
-      'fullWidth',
-      'icon',
-      'placeholder',
-      'autoFocus',
-      'autoFocusByKeyboard',
-      'name',
-      'type',
-      'onChange',
-      'onBlur',
-      'InputProps',
-      'inputProps',
-      'InputLabelProps',
-      'slotProps',
-      'inputRef',
-      'className',
-      'style',
-      'sx',
-    ],
-    typeFromValuesProps: [],
-  },
-  {
-    componentName: 'Modal',
-    importName: 'Modal',
-    implementationName: 'HugoUIModal',
-    propsTypeName: 'HugoUIModalProps',
-    sourceFile: 'packages/mui/src/Modal/Modal.tsx',
-    componentIndexFile: 'packages/mui/src/Modal/index.ts',
-    sourceFiles: [
-      'packages/mui/src/Modal/Modal.tsx',
-      'packages/mui/src/Modal/ModalFooter.tsx',
-      'packages/mui/src/Modal/ModalTitle.tsx',
-      'packages/mui/src/Modal/Feedback.tsx',
-      'packages/mui/src/Modal/index.ts',
-      'packages/mui/src/Modal/styles/modalTokens.ts',
-      'packages/mui/src/Modal/Modal.test.tsx',
-      'packages/mui/src/Modal/ModalFooter.test.tsx',
-      'packages/mui/src/Modal/ModalTitle.test.tsx',
-      'packages/storybook/src/stories/Modal.stories.tsx',
-    ],
-    directTypeNames: ['HugoUIModalProps'],
-    relatedTypes: [
-      'HugoUIModalButtonsType',
-      'HugoUIModalPrimaryButtonProps',
-      'HugoUIModalSecondaryButtonProps',
-      'HugoUIModalTertiaryButtonProps',
-      'HugoUIFeedbackMessageType',
-    ],
-    trackedProps: [
-      'open',
-      'title',
-      'type',
-      'onClose',
-      'buttonDefs',
-      'children',
-      'subTitle',
-      'closeButton',
-      'footerComponent',
-      'headerComponent',
-      'loading',
-      'showLoadingIndicator',
-      'messages',
-      'headerPrefixIcon',
-      'disableAutoFocus',
-      'id',
-      'className',
-      'style',
-      'slots',
-      'transitionDuration',
-      'fullScreen',
-    ],
-    typeFromValuesProps: ['type'],
-  },
-];
+const componentConfigs = contractConfig.components ?? [];
 
 const json = (value) => `${JSON.stringify(value, null, 2)}\n`;
 const toAbs = (relativePath) => path.join(repoRoot, relativePath);
@@ -189,7 +35,7 @@ const packageVersion = packageJson.version;
 const generatedAt = new Date().toISOString();
 const sourceCommit = getSourceCommit();
 
-const parsedConfig = loadTsConfig(toAbs('packages/mui/tsconfig.json'));
+const parsedConfig = loadTsConfig(toAbs(muiTsConfigPath));
 const program = ts.createProgram({
   rootNames: parsedConfig.fileNames,
   options: parsedConfig.options,
@@ -220,7 +66,7 @@ for (const config of componentConfigs) {
 
 const tokenContract = buildTokenContract();
 artifacts.push({
-  relativePath: `${tokenOutputDir}/token-map.contract.json`,
+  relativePath: path.posix.join(outputRoot, tokenContractPath),
   value: tokenContract,
 });
 
@@ -241,9 +87,9 @@ const manifest = {
     needsReview: contract.needsReview,
     needsReviewReason: contract.needsReviewReason,
   })),
-  tokenContract: 'tokens/token-map.contract.json',
-  notes: [
-    'This manifest covers only the MUI package scope.',
+  tokenContract: tokenContractPath,
+  notes: contractConfig.manifestNotes ?? [
+    `This manifest covers only the ${contractConfig.packageKey} package scope.`,
     'Use the component contract files as the machine-readable entry points for AI generation and validation.',
   ],
 };
@@ -345,7 +191,8 @@ function buildComponentContract(config, metadata) {
   const propsByName = new Map();
   const insertOrder = new Map();
   let nextOrder = 0;
-  const preferredOrder = new Map(config.trackedProps.map((name, index) => [name, index]));
+  const trackedProps = config.trackedProps ?? [];
+  const preferredOrder = new Map(trackedProps.map((name, index) => [name, index]));
   const typeFromValuesProps = new Set(config.typeFromValuesProps ?? []);
 
   const addProp = (prop) => {
@@ -374,7 +221,7 @@ function buildComponentContract(config, metadata) {
     existing.sources = unique([...(existing.sources ?? [existing.source]), prop.source]);
   };
 
-  for (const typeName of config.directTypeNames) {
+  for (const typeName of config.directTypeNames ?? [config.propsTypeName]) {
     for (const prop of collectDirectProps(typeName, new Set())) {
       addProp({
         ...prop,
@@ -384,7 +231,7 @@ function buildComponentContract(config, metadata) {
     }
   }
 
-  for (const propName of config.trackedProps) {
+  for (const propName of trackedProps) {
     if (propsByName.has(propName)) {
       continue;
     }
@@ -437,7 +284,9 @@ function buildComponentContract(config, metadata) {
     propsTypeName: config.propsTypeName,
     sourceFiles: unique([config.sourceFile, config.componentIndexFile, ...config.sourceFiles]),
     props,
-    relatedTypes: config.relatedTypes.map((typeName) => buildRelatedType(typeName)).filter(Boolean),
+    relatedTypes: (config.relatedTypes ?? [])
+      .map((typeName) => buildRelatedType(typeName))
+      .filter(Boolean),
     examples: metadata.examples ?? [],
     forbiddenProps: metadata.forbiddenProps ?? [],
     discouragedProps: metadata.discouragedProps ?? [],
@@ -473,8 +322,11 @@ function getTypeByName(typeName) {
 }
 
 function findTypeDeclaration(typeName) {
+  const sourceRoot = path.resolve(toAbs(muiSourceRoot));
+  const sourceRootWithSeparator = `${sourceRoot}${path.sep}`;
   for (const sourceFile of program.getSourceFiles()) {
-    if (!sourceFile.fileName.includes('/packages/mui/src/')) {
+    const fileName = path.resolve(sourceFile.fileName);
+    if (fileName !== sourceRoot && !fileName.startsWith(sourceRootWithSeparator)) {
       continue;
     }
     let result = null;
@@ -769,23 +621,19 @@ function buildTokenContract() {
     schemaVersion: 'token-map-contract/v1',
     packageName,
     packageVersion,
-    sourceFiles: [
-      'packages/mui/src/styles/color.ts',
-      'packages/mui/src/styles/colorRoles.ts',
-      'packages/mui/src/styles/theme.ts',
-    ],
+    sourceFiles: unique([rawPalettePath, semanticColorRolesPath, themePath]),
     rawPalette,
     semanticColorRoles,
-    themeExposures: [
+    themeExposures: contractConfig.tokenThemeExposures ?? [
       {
         name: 'hugoUITheme.hugoUIColors',
-        source: 'packages/mui/src/styles/theme.ts',
-        mapsFrom: 'packages/mui/src/styles/color.ts',
+        source: themePath,
+        mapsFrom: rawPalettePath,
       },
       {
         name: 'hugoUITheme.hugoUIColorRoles',
-        source: 'packages/mui/src/styles/theme.ts',
-        mapsFrom: 'packages/mui/src/styles/colorRoles.ts',
+        source: themePath,
+        mapsFrom: semanticColorRolesPath,
       },
     ],
     generationPolicy: [
@@ -800,7 +648,7 @@ function buildTokenContract() {
 }
 
 function readRawPalette() {
-  const fileName = toAbs('packages/mui/src/styles/color.ts');
+  const fileName = toAbs(rawPalettePath);
   const sourceFile = ts.createSourceFile(
     fileName,
     ts.sys.readFile(fileName) ?? '',
@@ -828,7 +676,7 @@ function readRawPalette() {
         entries.push({
           name: declaration.name.text,
           value: declaration.initializer.text,
-          source: 'packages/mui/src/styles/color.ts',
+          source: rawPalettePath,
         });
       }
     }
@@ -837,7 +685,7 @@ function readRawPalette() {
 }
 
 function readSemanticColorRoles(rawByName) {
-  const fileName = toAbs('packages/mui/src/styles/colorRoles.ts');
+  const fileName = toAbs(semanticColorRolesPath);
   const sourceFile = ts.createSourceFile(
     fileName,
     ts.sys.readFile(fileName) ?? '',
@@ -867,7 +715,7 @@ function readSemanticColorRoles(rawByName) {
         path: nextPath.join('.'),
         rawToken,
         value: rawByName.get(rawToken) ?? null,
-        source: 'packages/mui/src/styles/colorRoles.ts',
+        source: semanticColorRolesPath,
       });
     }
   };
@@ -879,7 +727,7 @@ function readSemanticColorRoles(rawByName) {
     for (const declaration of statement.declarationList.declarations) {
       if (
         ts.isIdentifier(declaration.name) &&
-        declaration.name.text === 'hugoUIColorRoles' &&
+        declaration.name.text === semanticColorRolesExportName &&
         declaration.initializer &&
         ts.isObjectLiteralExpression(declaration.initializer)
       ) {

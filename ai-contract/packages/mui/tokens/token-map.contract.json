@@ -1,7 +1,7 @@
 {
   "schemaVersion": "token-map-contract/v1",
   "packageName": "@hugo-ui/mui",
-  "packageVersion": "1.0.2",
+  "packageVersion": "1.0.3",
   "sourceFiles": [
     "packages/mui/src/styles/color.ts",
     "packages/mui/src/styles/colorRoles.ts",
@@ -317,6 +317,6 @@
     "Use raw palette names only when documenting or updating the design-token layer itself."
   ],
   "needsReview": false,
-  "generatedAt": "2026-06-18T16:25:52.214Z",
-  "sourceCommit": "28b72aee375fb36e8b5b75e591b4a5c2725c8f78"
+  "generatedAt": "2026-06-26T17:54:34.857Z",
+  "sourceCommit": "af8311c13607423b85503c1d1a92ef8a44145648"
 }

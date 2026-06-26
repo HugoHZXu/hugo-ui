@@ -1,16 +1,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { loadPackageContractConfig, repoRoot } from '../context.mjs';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const manifestPath = 'ai-contract/packages/mui/manifest.json';
+const contractConfig = await loadPackageContractConfig();
+const outputRoot = contractConfig.outputRoot;
+const manifestPath = `${outputRoot}/manifest.json`;
 const schemaPaths = [
-  'ai-contract/schema/component-contract.schema.json',
-  'ai-contract/schema/package-contract-manifest.schema.json',
+  `${contractConfig.schemaRoot}/component-contract.schema.json`,
+  `${contractConfig.schemaRoot}/package-contract-manifest.schema.json`,
 ];
-const packageName = '@hugo-ui/mui';
-const forbiddenPatterns = ['@hugo-ui/shadcn', 'packages/shadcn', '@demo/design-system'];
+const packageName = contractConfig.packageName;
+const sourcePackagePath = contractConfig.sourcePackagePath;
+const publicEntry = contractConfig.publicEntry;
+const forbiddenPatterns = contractConfig.forbiddenPatterns ?? [];
 const supportedSchemaKeywords = new Set([
   '$schema',
   '$id',
@@ -36,8 +39,8 @@ validateSchemaSubset(manifestSchema, manifest, manifestPath);
 assert(manifest.schemaVersion === 'package-contract-manifest/v1', 'Invalid manifest schemaVersion');
 assert(manifest.packageName === packageName, `Manifest packageName must be ${packageName}`);
 assert(
-  manifest.sourcePackagePath === 'packages/mui',
-  'Manifest sourcePackagePath must be packages/mui'
+  manifest.sourcePackagePath === sourcePackagePath,
+  `Manifest sourcePackagePath must be ${sourcePackagePath}`
 );
 assert(
   Array.isArray(manifest.components) && manifest.components.length > 0,
@@ -46,19 +49,19 @@ assert(
 assert(typeof manifest.tokenContract === 'string', 'Manifest tokenContract must be a string');
 assertNoForbiddenPatterns(manifest, manifestPath);
 
-const publicExports = readPublicExports('packages/mui/src/index.ts');
+const publicExports = readPublicExports(publicEntry);
 
 for (const entry of manifest.components ?? []) {
   assert(
     entry.importName && publicExports.has(entry.importName),
-    `${entry.importName} is not exported from packages/mui/src/index.ts`
+    `${entry.importName} is not exported from ${publicEntry}`
   );
   assert(
     typeof entry.contract === 'string',
     `${entry.componentName} manifest entry is missing contract`
   );
 
-  const contractPath = path.posix.join('ai-contract/packages/mui', entry.contract);
+  const contractPath = path.posix.join(outputRoot, entry.contract);
   assertFileExists(contractPath, `Missing contract file: ${contractPath}`);
   const contract = readJson(contractPath);
   validateSchemaSubset(componentSchema, contract, contractPath);
@@ -91,8 +94,8 @@ for (const entry of manifest.components ?? []) {
 
   for (const sourceFile of contract.sourceFiles ?? []) {
     assert(
-      !sourceFile.includes('packages/shadcn'),
-      `${contractPath} references non-MUI source file ${sourceFile}`
+      !forbiddenPatterns.some((pattern) => sourceFile.includes(pattern)),
+      `${contractPath} references forbidden source file ${sourceFile}`
     );
     assertFileExists(sourceFile, `${contractPath} references missing source file ${sourceFile}`);
   }
@@ -113,7 +116,7 @@ for (const entry of manifest.components ?? []) {
   }
 }
 
-const tokenPath = path.posix.join('ai-contract/packages/mui', manifest.tokenContract);
+const tokenPath = path.posix.join(outputRoot, manifest.tokenContract);
 assertFileExists(tokenPath, `Missing token contract: ${tokenPath}`);
 const tokenContract = readJson(tokenPath);
 assert(

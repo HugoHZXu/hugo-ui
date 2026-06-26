@@ -1,0 +1,29 @@
+{
+  "name": "@hugo-ui/ai-contract",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "hugo-ai-contract": "./src/cli.mjs"
+  },
+  "exports": {
+    ".": "./src/index.mjs",
+    "./cli": "./src/cli.mjs"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "package.json"
+  ],
+  "dependencies": {
+    "typescript": "^6.0.3"
+  },
+  "scripts": {
+    "generate:mui": "node src/cli.mjs generate --package mui",
+    "validate:mui": "node src/cli.mjs validate --package mui",
+    "check:mui": "node src/cli.mjs check --package mui",
+    "decide:mui": "node src/cli.mjs decide --package mui",
+    "pack:mui": "node src/cli.mjs pack --package mui"
+  }
+}

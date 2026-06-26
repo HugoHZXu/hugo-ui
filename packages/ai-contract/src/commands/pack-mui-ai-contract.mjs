@@ -3,20 +3,24 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
-import { fileURLToPath } from 'node:url';
+import { loadPackageContractConfig, repoRoot } from '../context.mjs';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const outputDir = path.join(repoRoot, 'dist/ai-contract');
-const sourcePackagePath = 'packages/mui';
-const sourcePackage = '@hugo-ui/mui';
-const artifactFormat = 'hugo-ui-mui-ai-contract/v1';
+const contractConfig = await loadPackageContractConfig();
+const outputRoot = contractConfig.outputRoot;
+const tokenContractPath = contractConfig.tokenContract ?? 'tokens/token-map.contract.json';
+const outputDir = path.join(repoRoot, contractConfig.artifactOutputDir ?? 'dist/ai-contract');
+const sourcePackagePath = contractConfig.sourcePackagePath;
+const sourcePackage = contractConfig.packageName;
+const artifactFormat = contractConfig.artifactFormat ?? `${sourcePackage}-ai-contract/v1`;
+const artifactNamePrefix =
+  contractConfig.artifactNamePrefix ?? sourcePackage.replace(/^@/, '').replace('/', '-');
 
 const packageJson = JSON.parse(
   await fs.readFile(path.join(repoRoot, `${sourcePackagePath}/package.json`), 'utf8')
 );
 const packageVersion = packageJson.version;
 const contractVersion = resolveContractVersion();
-const artifactName = `hugo-ui-mui-ai-contract-v${contractVersion}.tgz`;
+const artifactName = `${artifactNamePrefix}-v${contractVersion}.tgz`;
 const artifactPath = path.join(outputDir, artifactName);
 const checksumPath = `${artifactPath}.sha256`;
 
@@ -28,12 +32,15 @@ try {
   await fs.mkdir(outputDir, { recursive: true });
   await fs.mkdir(payloadDir, { recursive: true });
 
-  await copyFile('ai-contract/packages/mui/manifest.json', 'manifest.json');
-  await copyDirectory('ai-contract/schema', 'schema');
-  await copyDirectory('ai-contract/packages/mui/components', 'components');
-  await copyDirectory('ai-contract/packages/mui/tokens', 'tokens');
-  await copyDirectory('ai-contract/packages/mui/metadata', 'metadata');
-  await copyFile('ai-contract/README.md', 'README.md');
+  await copyFile(`${outputRoot}/manifest.json`, 'manifest.json');
+  await copyDirectory(contractConfig.schemaRoot, 'schema');
+  await copyDirectory(
+    contractConfig.componentOutputDir ?? `${outputRoot}/components`,
+    'components'
+  );
+  await copyDirectory(path.posix.dirname(path.posix.join(outputRoot, tokenContractPath)), 'tokens');
+  await copyDirectory(contractConfig.metadataRoot ?? `${outputRoot}/metadata`, 'metadata');
+  await copyFile(contractConfig.readmePath, 'README.md');
 
   const provenance = {
     sourceRepo: getSourceRepo(),

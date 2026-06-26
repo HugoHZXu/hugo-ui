@@ -1,7 +1,7 @@
 {
   "schemaVersion": "component-contract/v1",
   "packageName": "@hugo-ui/mui",
-  "packageVersion": "1.0.2",
+  "packageVersion": "1.0.3",
   "componentName": "Modal",
   "importName": "Modal",
   "importStatement": "import { Modal } from '@hugo-ui/mui';",
@@ -1084,6 +1084,6 @@
   },
   "needsReview": true,
   "needsReviewReason": "First contract version captures Modal and ModalFooter public structures, but inherited Dialog props are intentionally not exhaustively recommended.",
-  "generatedAt": "2026-06-18T16:49:50.895Z",
-  "sourceCommit": "28b72aee375fb36e8b5b75e591b4a5c2725c8f78"
+  "generatedAt": "2026-06-26T17:54:34.857Z",
+  "sourceCommit": "af8311c13607423b85503c1d1a92ef8a44145648"
 }

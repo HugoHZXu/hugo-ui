@@ -10,6 +10,11 @@ accessibility rules, generation rules, validation rules, and review status.
 These contracts are not Figma Code Connect, do not publish anything to Figma, and do not replace
 the React component source. The source package remains the implementation source of truth.
 
+The generator and validator are implemented in the private workspace package
+`@hugo-ui/ai-contract`. Package-specific inputs such as component source files, Storybook examples,
+token files, metadata roots, artifact naming, and release tag patterns are declared in
+`ai-contract.config.mjs` at the repository root.
+
 ## Current Scope
 
 The first phase covers `@hugo-ui/mui` only:

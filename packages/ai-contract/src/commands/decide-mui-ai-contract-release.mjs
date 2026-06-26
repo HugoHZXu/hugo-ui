@@ -2,19 +2,22 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadPackageContractConfig, packageKey, repoRoot } from '../context.mjs';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const tagPattern = 'mui-ai-contract-v*';
+const contractConfig = await loadPackageContractConfig();
+const cliPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../cli.mjs');
+const outputRoot = contractConfig.outputRoot;
+const tagPattern = contractConfig.tagPattern ?? 'mui-ai-contract-v*';
 const volatileKeys = new Set(['generatedAt', 'sourceCommit']);
 const explicitPaths = [
-  'ai-contract/packages/mui/manifest.json',
-  'ai-contract/packages/mui/tokens/token-map.contract.json',
-  'ai-contract/README.md',
+  `${outputRoot}/manifest.json`,
+  path.posix.join(outputRoot, contractConfig.tokenContract ?? 'tokens/token-map.contract.json'),
+  contractConfig.readmePath,
 ];
 const scopedDirectories = [
-  'ai-contract/packages/mui/components',
-  'ai-contract/packages/mui/metadata/components',
-  'ai-contract/schema',
+  contractConfig.componentOutputDir ?? `${outputRoot}/components`,
+  contractConfig.metadataDir ?? `${outputRoot}/metadata/components`,
+  contractConfig.schemaRoot,
 ];
 let contractCheckPassed = false;
 
@@ -64,8 +67,7 @@ try {
 }
 
 function runContractCheck() {
-  runNodeScript(['scripts/ai-contract/generate-mui-ai-contract.mjs', '--check']);
-  runNodeScript(['scripts/ai-contract/validate-mui-ai-contract.mjs']);
+  runNodeScript([cliPath, 'check', '--package', packageKey]);
 }
 
 function runNodeScript(args) {

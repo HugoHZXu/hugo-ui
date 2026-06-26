@@ -71,8 +71,10 @@ For non-interactive agent sessions, prefer the local Node wrapper:
 
 ## AI Contract Artifact
 
-The first AI component contract artifact covers `@hugo-ui/mui` components and tokens. Validate the
-checked-in contract, decide whether a new release is warranted, and pack it with:
+The first AI component contract artifact covers `@hugo-ui/mui` components and tokens. The tooling
+lives in the private workspace package `@hugo-ui/ai-contract`, with package-specific inputs declared
+in `ai-contract.config.mjs`. Validate the checked-in contract, decide whether a new release is
+warranted, and pack it with:
 
 ```bash
 ./scripts/codex-node.sh pnpm run contract:check:mui

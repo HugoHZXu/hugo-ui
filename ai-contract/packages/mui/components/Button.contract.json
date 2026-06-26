@@ -1,7 +1,7 @@
 {
   "schemaVersion": "component-contract/v1",
   "packageName": "@hugo-ui/mui",
-  "packageVersion": "1.0.2",
+  "packageVersion": "1.0.3",
   "componentName": "Button",
   "importName": "Button",
   "importStatement": "import { Button } from '@hugo-ui/mui';",
@@ -30,7 +30,11 @@
       "name": "level",
       "type": "'primary' | 'secondary' | 'tertiary'",
       "required": false,
-      "values": ["primary", "secondary", "tertiary"],
+      "values": [
+        "primary",
+        "secondary",
+        "tertiary"
+      ],
       "defaultValue": "primary",
       "description": "The level of the button",
       "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIPrimaryButtonStyleProps.level; typescript:component:packages/mui/src/Button/Button.tsx#HugoUISecondaryButtonStyleProps.level; typescript:component:packages/mui/src/Button/Button.tsx#HugoUITertiaryButtonStyleProps.level; typescript:component:packages/mui/src/Button/Button.tsx#HugoUIDestructButtonStyleProps.level; typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonStyleProps.level",
@@ -48,7 +52,12 @@
       "name": "colorTheme",
       "type": "'purple' | 'white' | 'grey' | 'red'",
       "required": false,
-      "values": ["purple", "white", "grey", "red"],
+      "values": [
+        "purple",
+        "white",
+        "grey",
+        "red"
+      ],
       "defaultValue": "purple",
       "description": "The color theme of the button",
       "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIPrimaryButtonStyleProps.colorTheme; typescript:component:packages/mui/src/Button/Button.tsx#HugoUISecondaryButtonStyleProps.colorTheme; typescript:component:packages/mui/src/Button/Button.tsx#HugoUITertiaryButtonStyleProps.colorTheme; typescript:component:packages/mui/src/Button/Button.tsx#HugoUIDestructButtonStyleProps.colorTheme; typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonStyleProps.colorTheme",
@@ -66,7 +75,11 @@
       "name": "size",
       "type": "'small' | 'medium' | 'large'",
       "required": false,
-      "values": ["small", "medium", "large"],
+      "values": [
+        "small",
+        "medium",
+        "large"
+      ],
       "defaultValue": "medium",
       "description": "The size of the button",
       "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.size",
@@ -92,7 +105,10 @@
       "name": "loadingPosition",
       "type": "'start' | 'center'",
       "required": false,
-      "values": ["start", "center"],
+      "values": [
+        "start",
+        "center"
+      ],
       "defaultValue": "start",
       "description": "The loading indicator can be positioned on the start or the center of the button.",
       "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.loadingPosition",
@@ -255,7 +271,11 @@
           "name": "size",
           "type": "HugoUIButtonSize",
           "required": false,
-          "values": ["small", "medium", "large"],
+          "values": [
+            "small",
+            "medium",
+            "large"
+          ],
           "description": "The size of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.size"
         },
@@ -271,7 +291,10 @@
           "name": "loadingPosition",
           "type": "'start' | 'center'",
           "required": false,
-          "values": ["start", "center"],
+          "values": [
+            "start",
+            "center"
+          ],
           "description": "The loading indicator can be positioned on the start or the center of the button.",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.loadingPosition"
         },
@@ -294,7 +317,9 @@
           "name": "level",
           "type": "'primary'",
           "required": false,
-          "values": ["primary"],
+          "values": [
+            "primary"
+          ],
           "description": "The level of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIPrimaryButtonStyleProps.level"
         },
@@ -302,7 +327,10 @@
           "name": "colorTheme",
           "type": "'purple' | 'white'",
           "required": false,
-          "values": ["purple", "white"],
+          "values": [
+            "purple",
+            "white"
+          ],
           "description": "The color theme of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIPrimaryButtonStyleProps.colorTheme"
         },
@@ -310,7 +338,11 @@
           "name": "size",
           "type": "HugoUIButtonSize",
           "required": false,
-          "values": ["small", "medium", "large"],
+          "values": [
+            "small",
+            "medium",
+            "large"
+          ],
           "description": "The size of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.size"
         },
@@ -326,7 +358,10 @@
           "name": "loadingPosition",
           "type": "'start' | 'center'",
           "required": false,
-          "values": ["start", "center"],
+          "values": [
+            "start",
+            "center"
+          ],
           "description": "The loading indicator can be positioned on the start or the center of the button.",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.loadingPosition"
         },
@@ -349,7 +384,9 @@
           "name": "level",
           "type": "'secondary'",
           "required": true,
-          "values": ["secondary"],
+          "values": [
+            "secondary"
+          ],
           "description": "The level of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUISecondaryButtonStyleProps.level"
         },
@@ -357,7 +394,11 @@
           "name": "colorTheme",
           "type": "'purple' | 'grey' | 'white'",
           "required": false,
-          "values": ["purple", "white", "grey"],
+          "values": [
+            "purple",
+            "white",
+            "grey"
+          ],
           "description": "The color theme of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUISecondaryButtonStyleProps.colorTheme"
         },
@@ -365,7 +406,11 @@
           "name": "size",
           "type": "HugoUIButtonSize",
           "required": false,
-          "values": ["small", "medium", "large"],
+          "values": [
+            "small",
+            "medium",
+            "large"
+          ],
           "description": "The size of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.size"
         },
@@ -381,7 +426,10 @@
           "name": "loadingPosition",
           "type": "'start' | 'center'",
           "required": false,
-          "values": ["start", "center"],
+          "values": [
+            "start",
+            "center"
+          ],
           "description": "The loading indicator can be positioned on the start or the center of the button.",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.loadingPosition"
         },
@@ -404,7 +452,9 @@
           "name": "level",
           "type": "'tertiary'",
           "required": true,
-          "values": ["tertiary"],
+          "values": [
+            "tertiary"
+          ],
           "description": "The level of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUITertiaryButtonStyleProps.level"
         },
@@ -412,7 +462,11 @@
           "name": "colorTheme",
           "type": "'purple' | 'grey' | 'white'",
           "required": false,
-          "values": ["purple", "white", "grey"],
+          "values": [
+            "purple",
+            "white",
+            "grey"
+          ],
           "description": "The color theme of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUITertiaryButtonStyleProps.colorTheme"
         },
@@ -420,7 +474,11 @@
           "name": "size",
           "type": "HugoUIButtonSize",
           "required": false,
-          "values": ["small", "medium", "large"],
+          "values": [
+            "small",
+            "medium",
+            "large"
+          ],
           "description": "The size of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.size"
         },
@@ -436,7 +494,10 @@
           "name": "loadingPosition",
           "type": "'start' | 'center'",
           "required": false,
-          "values": ["start", "center"],
+          "values": [
+            "start",
+            "center"
+          ],
           "description": "The loading indicator can be positioned on the start or the center of the button.",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.loadingPosition"
         },
@@ -459,7 +520,9 @@
           "name": "level",
           "type": "'primary'",
           "required": false,
-          "values": ["primary"],
+          "values": [
+            "primary"
+          ],
           "description": "The level of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIDestructButtonStyleProps.level"
         },
@@ -467,7 +530,9 @@
           "name": "colorTheme",
           "type": "'red'",
           "required": true,
-          "values": ["red"],
+          "values": [
+            "red"
+          ],
           "description": "The color theme of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIDestructButtonStyleProps.colorTheme"
         },
@@ -475,7 +540,11 @@
           "name": "size",
           "type": "HugoUIButtonSize",
           "required": false,
-          "values": ["small", "medium", "large"],
+          "values": [
+            "small",
+            "medium",
+            "large"
+          ],
           "description": "The size of the button",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.size"
         },
@@ -491,7 +560,10 @@
           "name": "loadingPosition",
           "type": "'start' | 'center'",
           "required": false,
-          "values": ["start", "center"],
+          "values": [
+            "start",
+            "center"
+          ],
           "description": "The loading indicator can be positioned on the start or the center of the button.",
           "source": "typescript:component:packages/mui/src/Button/Button.tsx#HugoUIButtonCommonProps.loadingPosition"
         },
@@ -580,7 +652,10 @@
       }
     },
     "loading": {
-      "props": ["loading", "loadingPosition"],
+      "props": [
+        "loading",
+        "loadingPosition"
+      ],
       "notes": "loading disables click behavior; center loading preserves button width."
     },
     "iconOnly": {
@@ -591,7 +666,11 @@
   "tokenPolicy": {
     "usesSemanticRoles": true,
     "preferredTokenLayer": "theme.hugoUIColorRoles",
-    "allowedComponentProps": ["level", "colorTheme", "size"],
+    "allowedComponentProps": [
+      "level",
+      "colorTheme",
+      "size"
+    ],
     "generationPolicy": [
       "Do not hardcode raw color values for normal button usage.",
       "Choose colorTheme and level instead of overriding MUI color or variant.",
@@ -643,11 +722,15 @@
     "publicExport": "packages/mui/src/index.ts",
     "propsType": "HugoUIButtonProps",
     "metadata": "ai-contract/packages/mui/metadata/components/Button.ai.json",
-    "stories": ["packages/storybook/src/stories/Button.stories.tsx"],
-    "tests": ["packages/mui/src/Button/button.test.tsx"]
+    "stories": [
+      "packages/storybook/src/stories/Button.stories.tsx"
+    ],
+    "tests": [
+      "packages/mui/src/Button/button.test.tsx"
+    ]
   },
   "needsReview": true,
   "needsReviewReason": "First contract version includes component-authored props plus selected inherited props that are used by source, stories, or tests. Review before treating all inherited MUI escape hatches as covered.",
-  "generatedAt": "2026-06-18T16:49:50.895Z",
-  "sourceCommit": "28b72aee375fb36e8b5b75e591b4a5c2725c8f78"
+  "generatedAt": "2026-06-26T17:54:34.857Z",
+  "sourceCommit": "af8311c13607423b85503c1d1a92ef8a44145648"
 }
