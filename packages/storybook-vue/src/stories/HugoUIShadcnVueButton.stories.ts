@@ -22,7 +22,7 @@ const darkCanvasStyle = {
 };
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Atoms/Button',
+  title: 'Hugo UI Shadcn Vue/Atom/Button',
   component: Button,
   tags: ['autodocs'],
   args: {

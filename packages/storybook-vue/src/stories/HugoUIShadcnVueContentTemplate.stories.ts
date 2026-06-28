@@ -7,7 +7,7 @@ const panelContentStyle = {
 };
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Templates/ContentTemplate',
+  title: 'Hugo UI Shadcn Vue/Molecule/ContentTemplate',
   component: ContentTemplate,
   tags: ['autodocs'],
   args: {

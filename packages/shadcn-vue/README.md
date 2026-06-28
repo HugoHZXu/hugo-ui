@@ -10,7 +10,18 @@ Import the library stylesheet once in your app entry:
 <script setup lang="ts">
 import { ref } from 'vue';
 import '@hugo-ui/shadcn-vue/styles.css';
-import { Button, Checkbox, Input, Modal, ModalContentText } from '@hugo-ui/shadcn-vue';
+import {
+  Button,
+  Checkbox,
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  Input,
+  MetricTile,
+  Modal,
+  ModalContentText,
+  StatusBadge,
+} from '@hugo-ui/shadcn-vue';
 
 const open = ref(false);
 </script>
@@ -25,6 +36,18 @@ const open = ref(false);
   <Modal v-model:open="open" title="Review changes">
     <ModalContentText>Confirm the selected example before saving.</ModalContentText>
   </Modal>
+
+  <MetricTile label="Ready" :value="24" description="items available" tone="success" />
+  <StatusBadge status="ready" show-dot />
+
+  <DropdownMenu>
+    <template #trigger>
+      <Button variant="outline">Actions</Button>
+    </template>
+    <DropdownMenuItem shortcut="Cmd+E">Export</DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem destructive>Remove</DropdownMenuItem>
+  </DropdownMenu>
 </template>
 ```
 
@@ -43,6 +66,21 @@ Use `slotProps` for native attributes and `classNames` for slot-level styling.
 `Modal` provides transactional, destructive, warning, informational, and error dialog variants. Use
 `buttonDefs` to override action labels or handlers, named slots for custom header/footer content,
 and `classNames` or `slotProps` for slot-level styling.
+
+`StatusBadge` maps common UI status strings such as `ready`, `warning`, `blocked`, `success`, and
+`failed` to semantic tones. Override `tone` when a product needs a different mapping, and use
+`variant`, `size`, `showDot`, or the `icon` slot for presentation changes.
+
+`EmptyState` and `ErrorState` render compact feedback blocks for empty tables, empty sections,
+unavailable content, and retryable errors. Use the `action` slot for buttons or links; examples
+should stay generic and avoid product-specific state rules.
+
+`MetricTile` renders compact statistics with `label`, `value`, optional `description`, optional
+`delta`, semantic `tone`, and an `icon` slot. It is intended for summary counts, not charts.
+
+`DropdownMenu` wraps reka-ui menu primitives for trigger-based action menus. Use
+`DropdownMenuItem` for regular, disabled, or destructive actions, `DropdownMenuSeparator` for visual
+groups, the `icon` slot for leading icons, and `shortcut` for shortcut text.
 
 `DataGrid` can show an optional checkbox selection column with `showCheckboxColumn`. Control the
 checked rows with `selectedRowIds` and listen for `selectedRowIdsChange`; row checkbox events are

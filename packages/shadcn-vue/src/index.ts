@@ -9,6 +9,19 @@ export type {
 export { default as Badge } from './components/ui/badge/Badge.vue';
 export { badgeVariants } from './components/ui/badge/badge';
 export type { BadgeProps, BadgeTone } from './components/ui/badge/badge';
+export { default as StatusBadge } from './components/ui/status-badge/StatusBadge.vue';
+export {
+  formatStatusLabel,
+  normalizeStatusKey,
+  resolveStatusTone,
+  statusBadgeVariants,
+} from './components/ui/status-badge/statusBadge';
+export type {
+  StatusBadgeProps,
+  StatusBadgeSize,
+  StatusBadgeTone,
+  StatusBadgeVariant,
+} from './components/ui/status-badge/statusBadge';
 export { default as Input } from './components/ui/input/Input.vue';
 export type {
   InputClassNames,
@@ -67,6 +80,48 @@ export type {
   ModalTitleProps,
   ModalType,
 } from './components/ui/modal';
+export {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from './components/ui/dropdown-menu';
+export type {
+  DropdownMenuAlign,
+  DropdownMenuClassNames,
+  DropdownMenuEmits,
+  DropdownMenuItemEmits,
+  DropdownMenuItemProps,
+  DropdownMenuProps,
+  DropdownMenuSeparatorProps,
+  DropdownMenuSide,
+  DropdownMenuSlotAttributes,
+  DropdownMenuSlotProps,
+} from './components/ui/dropdown-menu';
+export { default as EmptyState } from './components/ui/empty-state/EmptyState.vue';
+export { default as ErrorState } from './components/ui/empty-state/ErrorState.vue';
+export {
+  emptyStateIconVariants,
+  emptyStateRootVariants,
+} from './components/ui/empty-state/emptyState';
+export type {
+  EmptyStateClassNames,
+  EmptyStateProps,
+  EmptyStateTone,
+  EmptyStateVariant,
+  ErrorStateProps,
+} from './components/ui/empty-state/emptyState';
+export { default as MetricTile } from './components/ui/metric-tile/MetricTile.vue';
+export {
+  metricTileIconClass,
+  metricTileRootVariants,
+  metricTileToneTextClass,
+} from './components/ui/metric-tile/metricTile';
+export type {
+  MetricTileClassNames,
+  MetricTileProps,
+  MetricTileTone,
+  MetricTileTrend,
+} from './components/ui/metric-tile/metricTile';
 export { default as ContentTemplate } from './components/templates/content-template/ContentTemplate.vue';
 export type {
   ContentTemplateEmits,

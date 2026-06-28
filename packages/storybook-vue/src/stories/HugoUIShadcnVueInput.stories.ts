@@ -10,7 +10,7 @@ const stackStyle = {
 };
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Atoms/Input',
+  title: 'Hugo UI Shadcn Vue/Atom/Input',
   component: Input,
   tags: ['autodocs'],
   args: {

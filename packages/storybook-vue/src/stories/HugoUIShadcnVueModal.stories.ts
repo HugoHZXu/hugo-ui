@@ -23,7 +23,7 @@ const getModalArgs = (args: Record<string, unknown>) =>
   });
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Molecules/Modal',
+  title: 'Hugo UI Shadcn Vue/Molecule/Modal',
   component: Modal,
   tags: ['autodocs'],
   args: {

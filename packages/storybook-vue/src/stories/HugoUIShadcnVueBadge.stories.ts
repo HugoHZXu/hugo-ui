@@ -17,7 +17,7 @@ const tones = [
 ];
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Atoms/Badge',
+  title: 'Hugo UI Shadcn Vue/Atom/Badge',
   component: Badge,
   tags: ['autodocs'],
   args: {

@@ -27,7 +27,7 @@ const demoContentStyle = {
 };
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Templates/PageTemplate',
+  title: 'Hugo UI Shadcn Vue/Molecule/PageTemplate',
   component: PageTemplate,
   tags: ['autodocs'],
   args: {

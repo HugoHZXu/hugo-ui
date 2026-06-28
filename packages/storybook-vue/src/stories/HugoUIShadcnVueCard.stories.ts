@@ -19,7 +19,7 @@ const previewStyle = {
 };
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Molecules/Card',
+  title: 'Hugo UI Shadcn Vue/Molecule/Card',
   component: Card,
   tags: ['autodocs'],
   args: {

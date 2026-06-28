@@ -142,7 +142,7 @@ const previewStyle = {
 };
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Molecules/DataGrid',
+  title: 'Hugo UI Shadcn Vue/Molecule/DataGrid',
   component: DataGrid as never,
   tags: ['autodocs'],
   args: {

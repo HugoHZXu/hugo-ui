@@ -18,7 +18,7 @@ const rowStyle = {
 };
 
 const meta = {
-  title: 'Hugo UI Shadcn Vue/Atoms/Checkbox',
+  title: 'Hugo UI Shadcn Vue/Atom/Checkbox',
   component: Checkbox,
   tags: ['autodocs'],
   args: {
