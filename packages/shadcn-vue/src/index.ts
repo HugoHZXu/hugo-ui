@@ -45,6 +45,28 @@ export type {
   DataGridProps,
   DataGridSort,
 } from './components/ui/data-grid/dataGrid';
+export {
+  Modal,
+  ModalContentText,
+  ModalFooter,
+  ModalLoadingIndicator,
+  ModalTitle,
+} from './components/ui/modal';
+export type {
+  ModalButtonProps,
+  ModalButtonsType,
+  ModalClassNames,
+  ModalContentTextProps,
+  ModalEmits,
+  ModalFooterProps,
+  ModalLoadingIndicatorProps,
+  ModalProps,
+  ModalSlotAttributes,
+  ModalSlotProps,
+  ModalTertiaryActionProps,
+  ModalTitleProps,
+  ModalType,
+} from './components/ui/modal';
 export { default as ContentTemplate } from './components/templates/content-template/ContentTemplate.vue';
 export type {
   ContentTemplateEmits,

@@ -8,8 +8,11 @@ Import the library stylesheet once in your app entry:
 
 ```vue
 <script setup lang="ts">
+import { ref } from 'vue';
 import '@hugo-ui/shadcn-vue/styles.css';
-import { Button, Checkbox, Input } from '@hugo-ui/shadcn-vue';
+import { Button, Checkbox, Input, Modal, ModalContentText } from '@hugo-ui/shadcn-vue';
+
+const open = ref(false);
 </script>
 
 <template>
@@ -18,6 +21,10 @@ import { Button, Checkbox, Input } from '@hugo-ui/shadcn-vue';
     <Checkbox label="Enable sample option" />
     <Button type="submit">Save</Button>
   </form>
+
+  <Modal v-model:open="open" title="Review changes">
+    <ModalContentText>Confirm the selected example before saving.</ModalContentText>
+  </Modal>
 </template>
 ```
 
@@ -32,6 +39,10 @@ Use `slotProps` for native attributes and `classNames` for slot-level styling.
 `defaultValue`. It exposes stable `data-component="hugo-checkbox"` and `data-slot` hooks for
 `root`, `checkbox-control`, `checkbox-box`, `checkbox-indicator`, `checkbox-icon`,
 `checkbox-content`, `checkbox-label`, and `checkbox-description`.
+
+`Modal` provides transactional, destructive, warning, informational, and error dialog variants. Use
+`buttonDefs` to override action labels or handlers, named slots for custom header/footer content,
+and `classNames` or `slotProps` for slot-level styling.
 
 `DataGrid` can show an optional checkbox selection column with `showCheckboxColumn`. Control the
 checked rows with `selectedRowIds` and listen for `selectedRowIdsChange`; row checkbox events are
