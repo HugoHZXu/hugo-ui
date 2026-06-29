@@ -77,6 +77,36 @@ describe('Combobox', () => {
     expect(document.body.querySelectorAll('[data-slot="combobox-item"]')).toHaveLength(1);
   });
 
+  it('renders the selected indicator after the item text and centered in the option block', async () => {
+    const wrapper = mount(Combobox, {
+      props: {
+        defaultOpen: true,
+        defaultValue: 'alpha',
+        forceMount: true,
+        options,
+      },
+      attachTo: document.body,
+    });
+    wrappers.push(wrapper);
+
+    await nextTick();
+
+    const selectedItem = document.body.querySelector(
+      '[data-slot="combobox-item"][data-value="alpha"]'
+    );
+    const childSlots = Array.from(selectedItem?.children ?? []).map((child) =>
+      child.getAttribute('data-slot')
+    );
+    const indicator = selectedItem?.querySelector('[data-slot="combobox-item-indicator"]');
+
+    expect(childSlots.indexOf('combobox-item-text')).toBeGreaterThanOrEqual(0);
+    expect(childSlots.indexOf('combobox-item-indicator')).toBeGreaterThanOrEqual(0);
+    expect(childSlots.indexOf('combobox-item-text')).toBeLessThan(
+      childSlots.indexOf('combobox-item-indicator')
+    );
+    expect(indicator?.className).toContain('self-center');
+  });
+
   it('runs async search and shows returned options', async () => {
     const search = vi.fn(async (query: string) => [{ label: `${query} result`, value: 'result' }]);
     const wrapper = mount(Combobox, {

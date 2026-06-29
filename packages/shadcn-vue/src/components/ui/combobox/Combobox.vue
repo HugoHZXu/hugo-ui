@@ -208,7 +208,10 @@ const viewportClassName = computed(() => cn('max-h-72 p-0', props.classNames?.vi
 const groupLabelClassName = computed(() => cn(choiceGroupLabelClass, props.classNames?.groupLabel));
 const itemClassName = computed(() => cn(choiceItemClass, props.classNames?.item));
 const itemIndicatorClassName = computed(() =>
-  cn('mt-0.5 grid size-4 shrink-0 place-items-center text-current', props.classNames?.itemIndicator)
+  cn(
+    'grid size-4 shrink-0 place-items-center self-center text-current',
+    props.classNames?.itemIndicator
+  )
 );
 const itemTextClassName = computed(() => cn('min-w-0 flex-1', props.classNames?.itemText));
 const itemDescriptionClassName = computed(() =>
@@ -514,12 +517,6 @@ function hasOptionDescription(option: ChoiceOption) {
                   :text-value="String(option.label)"
                   :value="option.value"
                 >
-                  <ComboboxItemIndicator
-                    :class="itemIndicatorClassName"
-                    data-slot="combobox-item-indicator"
-                  >
-                    <Check aria-hidden="true" :size="16" />
-                  </ComboboxItemIndicator>
                   <span :class="itemTextClassName" data-slot="combobox-item-text">
                     <span class="block truncate">
                       <slot name="option" :option="option">
@@ -534,6 +531,12 @@ function hasOptionDescription(option: ChoiceOption) {
                       {{ option.description }}
                     </span>
                   </span>
+                  <ComboboxItemIndicator
+                    :class="itemIndicatorClassName"
+                    data-slot="combobox-item-indicator"
+                  >
+                    <Check aria-hidden="true" :size="16" />
+                  </ComboboxItemIndicator>
                 </ComboboxItem>
               </ComboboxGroup>
             </template>
