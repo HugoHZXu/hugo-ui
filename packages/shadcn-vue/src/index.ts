@@ -33,6 +33,59 @@ export type {
   InputSlotProps,
   InputStatus,
 } from './components/ui/input/input';
+export type {
+  ChoiceAlign,
+  ChoiceClassNames,
+  ChoiceOption,
+  ChoiceSide,
+  ChoiceSize,
+  ChoiceSlotAttributes,
+  ChoiceSlotProps,
+  ChoiceStatus,
+  ChoiceValue,
+  GroupedChoiceOptions,
+} from './components/ui/choice/choice';
+export {
+  choiceContentClass,
+  choiceControlClass,
+  choiceGroupLabelClass,
+  choiceHelperClass,
+  choiceItemClass,
+  choiceLabelClass,
+  choiceRootClass,
+  filterChoiceOptions,
+  findChoiceOption,
+  getChoiceLabel,
+  getGroupedChoiceOptions,
+  omitChoiceAttributes,
+} from './components/ui/choice/choice';
+export { default as Select } from './components/ui/select/Select.vue';
+export type {
+  SelectAlign,
+  SelectClassNames,
+  SelectEmits,
+  SelectOption,
+  SelectProps,
+  SelectSide,
+  SelectSize,
+  SelectSlotProps,
+  SelectStatus,
+  SelectValue,
+} from './components/ui/select/select';
+export { default as Combobox } from './components/ui/combobox/Combobox.vue';
+export type {
+  ComboboxAlign,
+  ComboboxClassNames,
+  ComboboxEmits,
+  ComboboxOption,
+  ComboboxProps,
+  ComboboxSearch,
+  ComboboxSide,
+  ComboboxSize,
+  ComboboxSlotProps,
+  ComboboxStatus,
+  ComboboxValue,
+} from './components/ui/combobox/combobox';
 export { default as Checkbox } from './components/ui/checkbox/Checkbox.vue';
 export type {
   CheckboxClassNames,

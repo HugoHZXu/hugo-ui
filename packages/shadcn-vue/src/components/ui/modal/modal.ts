@@ -4,7 +4,7 @@ import type {
   HugoUIShadcnVueButtonSize,
   HugoUIShadcnVueButtonTone,
   HugoUIShadcnVueButtonVariant,
-} from '@/components/ui/button/button';
+} from '../button/button';
 
 export type ModalType = 'transactional' | 'destructive' | 'warning' | 'informational' | 'error';
 

@@ -13,6 +13,7 @@ import '@hugo-ui/shadcn-vue/styles.css';
 import {
   Button,
   Checkbox,
+  Combobox,
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -22,12 +23,24 @@ import {
   Modal,
   ModalContentText,
   Progress,
+  Select,
   StatusBadge,
   WorkflowStepper,
 } from '@hugo-ui/shadcn-vue';
 
 const open = ref(false);
 const files = ref<File[]>([]);
+const action = ref('assign');
+const selectedItem = ref<string | number | null>(null);
+const actions = [
+  { label: 'Assign', value: 'assign' },
+  { label: 'Revoke', value: 'revoke' },
+];
+const searchableItems = [
+  { label: 'Alpha item', value: 'alpha', description: 'Available for the first section' },
+  { label: 'Beta item', value: 'beta', description: 'Available for the second section' },
+  { label: 'Gamma item', value: 'gamma', disabled: true },
+];
 const steps = [
   { id: 'prepare', title: 'Prepare', status: 'success' },
   { id: 'review', title: 'Review', status: 'active' },
@@ -38,6 +51,8 @@ const steps = [
 <template>
   <form class="grid gap-4">
     <Input label="Item name" placeholder="Add a label" required />
+    <Select v-model="action" label="Action" :options="actions" />
+    <Combobox v-model="selectedItem" label="Searchable item" :options="searchableItems" clearable />
     <Checkbox label="Enable sample option" />
     <Button type="submit">Save</Button>
   </form>
@@ -69,6 +84,16 @@ const steps = [
 `data-component="hugo-input"` and `data-slot` hooks for `root`, `label`, `control`, `input`,
 `textarea`, `adornment`, `helper`, `counter`, `status`, `spinner`, and `required-mark`.
 Use `slotProps` for native attributes and `classNames` for slot-level styling.
+
+`Select` wraps reka-ui select primitives for small fixed option sets. It supports `v-model`,
+placeholder text, disabled and disabled-option states, size, error messaging, grouped options,
+keyboard navigation, focus handling, and stable slot hooks for root, label, control, value, content,
+groups, items, and helper text.
+
+`Combobox` wraps reka-ui combobox primitives for searchable choices. Use local `options` for
+client-side filtering or `search` with `debounce` for asynchronous results. It supports
+`v-model:query`, loading and empty states, option descriptions, grouped options, clearable
+selection, keyboard selection, and the same helper/error styling contract as `Select`.
 
 `Checkbox` supports checked, unchecked, and indeterminate states through `modelValue` or
 `defaultValue`. It exposes stable `data-component="hugo-checkbox"` and `data-slot` hooks for

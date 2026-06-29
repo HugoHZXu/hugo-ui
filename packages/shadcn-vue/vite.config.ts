@@ -54,7 +54,7 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: (id: string) => !id.startsWith('.') && !path.isAbsolute(id),
+      external: (id: string) => !id.startsWith('.') && !path.isAbsolute(id) && !id.startsWith('@/'),
       output: {
         preserveModules: true,
         preserveModulesRoot: 'src',
