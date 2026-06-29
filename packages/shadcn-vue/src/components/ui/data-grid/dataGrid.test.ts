@@ -61,6 +61,9 @@ const mountDataGrid = (props: Record<string, unknown> = {}) =>
     },
   });
 
+const getGridTemplateColumnsStyle = (wrapper: ReturnType<typeof mountDataGrid>) =>
+  wrapper.find('[role="row"]').attributes('style') ?? '';
+
 const setScrollMetrics = (
   element: HTMLElement,
   metrics: { clientHeight: number; scrollHeight: number; scrollTop: number }
@@ -92,6 +95,26 @@ describe('DataGrid', () => {
     ]);
     expect(wrapper.text()).toContain('Item 1');
     expect(wrapper.text()).toContain('Ready');
+  });
+
+  it('stretches the final column when no grow column is configured', () => {
+    const wrapper = mountDataGrid();
+
+    expect(getGridTemplateColumnsStyle(wrapper)).toContain(
+      'grid-template-columns: 220px 140px minmax(120px, 1fr)'
+    );
+  });
+
+  it('stretches all configured grow columns instead of the final column', () => {
+    const wrapper = mountDataGrid({
+      columns: columns.map((column) =>
+        column.id === 'label' || column.id === 'state' ? { ...column, grow: true } : column
+      ),
+    });
+
+    expect(getGridTemplateColumnsStyle(wrapper)).toContain(
+      'grid-template-columns: minmax(220px, 1fr) minmax(140px, 1fr) 120px'
+    );
   });
 
   it('applies fixed viewport height when fill is false', () => {

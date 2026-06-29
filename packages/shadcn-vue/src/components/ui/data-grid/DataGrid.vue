@@ -40,6 +40,19 @@ import {
   type DataGridSort,
 } from './dataGrid';
 
+type DataGridColumnMeta = {
+  align?: 'left' | 'center' | 'right';
+  grow?: boolean;
+  label?: string;
+  selectable?: boolean;
+  sortable?: boolean;
+};
+
+type DataGridColumnLayout = {
+  grow?: boolean;
+  size: number;
+};
+
 defineOptions({
   inheritAttrs: false,
 });
@@ -124,6 +137,7 @@ const tableColumns = computed<ColumnDef<T>[]>(() => {
     enableSorting: column.sortable ?? false,
     meta: {
       align: column.align,
+      grow: column.grow ?? false,
       label: typeof column.header === 'string' ? column.header : column.id,
       sortable: column.sortable ?? false,
     },
@@ -180,7 +194,12 @@ const tableWidthStyle = computed(() => ({
   width: '100%',
 }));
 const gridTemplateColumns = computed(() =>
-  getStretchGridTemplateColumns(visibleColumns.value.map((column) => column.getSize()))
+  getStretchGridTemplateColumns(
+    visibleColumns.value.map((column) => ({
+      grow: getColumnMeta(column)?.grow ?? false,
+      size: column.getSize(),
+    }))
+  )
 );
 const totalBodyHeight = computed(() => tableRows.value.length * props.rowHeight);
 const visibleRange = computed(() => {
@@ -348,27 +367,24 @@ function getNextSort(columnId: string, sort?: DataGridSort): DataGridSort {
   return { columnId, direction: 'asc' };
 }
 
-function getStretchGridTemplateColumns(columnSizes: number[]) {
-  if (columnSizes.length === 0) {
+function getStretchGridTemplateColumns(columns: DataGridColumnLayout[]) {
+  if (columns.length === 0) {
     return '';
   }
 
-  return columnSizes
-    .map((size, index) =>
-      index === columnSizes.length - 1 ? `minmax(${size}px, 1fr)` : `${size}px`
-    )
+  const hasGrowColumn = columns.some((column) => column.grow);
+
+  return columns
+    .map((column, index) => {
+      const shouldGrow = hasGrowColumn ? column.grow : index === columns.length - 1;
+
+      return shouldGrow ? `minmax(${column.size}px, 1fr)` : `${column.size}px`;
+    })
     .join(' ');
 }
 
 function getColumnMeta(column: { columnDef: { meta?: unknown } }) {
-  return column.columnDef.meta as
-    | {
-        align?: 'left' | 'center' | 'right';
-        label?: string;
-        selectable?: boolean;
-        sortable?: boolean;
-      }
-    | undefined;
+  return column.columnDef.meta as DataGridColumnMeta | undefined;
 }
 
 function createCheckboxColumn(): ColumnDef<T> {

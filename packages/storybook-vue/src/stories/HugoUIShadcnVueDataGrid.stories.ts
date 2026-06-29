@@ -133,6 +133,10 @@ const columns: DataGridColumn<ExampleEntry>[] = [
   },
 ];
 
+const flexibleColumns: DataGridColumn<ExampleEntry>[] = columns.map((column) =>
+  column.id === 'label' || column.id === 'section' ? { ...column, grow: true } : column
+);
+
 const previewStyle = {
   background: 'var(--hugo-ui-shadcn-surface-subtle)',
   display: 'grid',
@@ -182,7 +186,7 @@ const meta = {
     columns: {
       control: false,
       description:
-        'Column definitions. Set `sortable: true` on a column to make it sortable when `@sort-change` is provided.',
+        'Column definitions. Set `sortable: true` for opt-in sorting and `grow: true` on one or more columns to let them share remaining width.',
       table: { type: { summary: 'DataGridColumn<T>[]' } },
     },
     rows: {
@@ -439,6 +443,26 @@ export const ControlledColumnWidths: Story = {
           :height="420"
           :column-sizing="{ widths, resizeMode: 'onEnd' }"
           @column-widths-change="widths = $event"
+        />
+      </div>
+    `,
+  }),
+};
+
+export const FlexibleColumns: Story = {
+  render: () => ({
+    components: { DataGrid },
+    setup() {
+      return { entries, flexibleColumns, previewStyle };
+    },
+    template: `
+      <div :style="previewStyle">
+        <DataGrid
+          aria-label="Flexible column entries"
+          :columns="flexibleColumns"
+          :rows="entries.slice(0, 16)"
+          :get-row-id="(row) => row.id"
+          :height="420"
         />
       </div>
     `,

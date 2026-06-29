@@ -9,6 +9,7 @@ export type DataGridColumn<T> = {
   width?: number;
   minWidth?: number;
   maxWidth?: number;
+  grow?: boolean;
   align?: 'left' | 'center' | 'right';
   resizable?: boolean;
 };

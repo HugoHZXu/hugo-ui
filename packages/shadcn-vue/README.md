@@ -144,6 +144,18 @@ kept separate from `rowClick` and `selectedRowIdChange`. Use `showHeaderCheckbox
 header select-all checkbox when bulk selection is not desired. The checkbox column participates in
 column resizing.
 
+`DataGridColumn` accepts `grow: true` when a column should share the remaining horizontal width.
+When no column sets `grow`, the final visible column keeps the default remaining-width behavior.
+When multiple columns set `grow`, they share the remaining width evenly.
+
+```ts
+const columns = [
+  { id: 'label', header: 'Item', minWidth: 220, grow: true, render: (row) => row.label },
+  { id: 'section', header: 'Section', minWidth: 160, grow: true, render: (row) => row.section },
+  { id: 'count', header: 'Count', width: 120, render: (row) => row.count },
+];
+```
+
 For layouts where the parent owns the available height, prefer `fill` so the root, border wrapper,
 and internal grid viewport form a reliable full-height scroll chain:
 
