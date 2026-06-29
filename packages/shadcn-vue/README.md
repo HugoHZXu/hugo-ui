@@ -16,14 +16,23 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  FileDropzone,
   Input,
   MetricTile,
   Modal,
   ModalContentText,
+  Progress,
   StatusBadge,
+  WorkflowStepper,
 } from '@hugo-ui/shadcn-vue';
 
 const open = ref(false);
+const files = ref<File[]>([]);
+const steps = [
+  { id: 'prepare', title: 'Prepare', status: 'success' },
+  { id: 'review', title: 'Review', status: 'active' },
+  { id: 'finish', title: 'Finish' },
+];
 </script>
 
 <template>
@@ -39,6 +48,9 @@ const open = ref(false);
 
   <MetricTile label="Ready" :value="24" description="items available" tone="success" />
   <StatusBadge status="ready" show-dot />
+  <Progress label="Processing" :model-value="64" show-value />
+  <WorkflowStepper :steps="steps" />
+  <FileDropzone v-model="files" accept=".csv,.txt" title="Upload a sample file" />
 
   <DropdownMenu>
     <template #trigger>
@@ -81,6 +93,19 @@ should stay generic and avoid product-specific state rules.
 `DropdownMenu` wraps reka-ui menu primitives for trigger-based action menus. Use
 `DropdownMenuItem` for regular, disabled, or destructive actions, `DropdownMenuSeparator` for visual
 groups, the `icon` slot for leading icons, and `shortcut` for shortcut text.
+
+`Progress` renders determinate or indeterminate operation feedback. Use `modelValue` with
+`showValue` for known progress, `indeterminate` for unknown progress, and semantic `tone` values for
+success, warning, or danger states.
+
+`WorkflowStepper` renders vertical workflow or timeline-style progress with pending, active,
+success, warning, and error states. It supports optional clickable steps through `clickable` and
+`v-model`; `Timeline` is exported as an alias for the same component.
+
+`FileDropzone` handles drag and drop, click-to-select, `accept`, `maxSize`, single or multiple
+selection, selected file display, error display, and status styling. It emits selected files and
+rejections, but leaves the real upload request to the application. `Upload` is exported as an alias
+for the same component.
 
 `DataGrid` can show an optional checkbox selection column with `showCheckboxColumn`. Control the
 checked rows with `selectedRowIds` and listen for `selectedRowIdsChange`; row checkbox events are

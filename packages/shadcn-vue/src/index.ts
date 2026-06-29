@@ -97,6 +97,50 @@ export type {
   DropdownMenuSlotAttributes,
   DropdownMenuSlotProps,
 } from './components/ui/dropdown-menu';
+export { default as Progress } from './components/ui/progress/Progress.vue';
+export {
+  clampProgressValue,
+  getProgressPercent,
+  progressIndicatorVariants,
+  progressTrackVariants,
+} from './components/ui/progress/progress';
+export type {
+  ProgressClassNames,
+  ProgressProps,
+  ProgressSize,
+  ProgressTone,
+} from './components/ui/progress/progress';
+export { default as FileDropzone } from './components/ui/file-dropzone/FileDropzone.vue';
+export { default as Upload } from './components/ui/file-dropzone/FileDropzone.vue';
+export {
+  fileDropzoneRootVariants,
+  fileMatchesAccept,
+  formatFileSize,
+  normalizeAcceptEntries,
+} from './components/ui/file-dropzone/fileDropzone';
+export type {
+  FileDropzoneClassNames,
+  FileDropzoneEmits,
+  FileDropzoneProps,
+  FileDropzoneRejectReason,
+  FileDropzoneRejection,
+  FileDropzoneStatus,
+} from './components/ui/file-dropzone/fileDropzone';
+export { default as WorkflowStepper } from './components/ui/workflow-stepper/WorkflowStepper.vue';
+export { default as Timeline } from './components/ui/workflow-stepper/WorkflowStepper.vue';
+export {
+  getWorkflowStepMeta,
+  workflowStepperIndicatorClass,
+  workflowStepperStatusTextClass,
+} from './components/ui/workflow-stepper/workflowStepper';
+export type {
+  WorkflowStep,
+  WorkflowStepperClassNames,
+  WorkflowStepperEmits,
+  WorkflowStepperOrientation,
+  WorkflowStepperProps,
+  WorkflowStepperStatus,
+} from './components/ui/workflow-stepper/workflowStepper';
 export { default as EmptyState } from './components/ui/empty-state/EmptyState.vue';
 export { default as ErrorState } from './components/ui/empty-state/ErrorState.vue';
 export {
