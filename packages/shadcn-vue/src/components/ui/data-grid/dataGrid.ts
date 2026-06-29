@@ -40,6 +40,7 @@ export type DataGridProps<T> = {
   empty?: string | VNode;
   endReachedThreshold?: number;
   error?: string | VNode;
+  fill?: boolean;
   getRowId: (row: T) => string;
   hasMore?: boolean;
   height?: number | string;
@@ -54,6 +55,7 @@ export type DataGridProps<T> = {
   showCheckboxColumn?: boolean;
   showHeaderCheckbox?: boolean;
   sort?: DataGridSort;
+  virtualized?: boolean;
 };
 
 export type DataGridEmits<T> = {

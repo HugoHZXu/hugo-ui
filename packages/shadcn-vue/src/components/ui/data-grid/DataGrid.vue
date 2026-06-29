@@ -48,6 +48,7 @@ const props = withDefaults(defineProps<DataGridProps<T>>(), {
   as: 'div',
   empty: DEFAULT_EMPTY_STATE,
   endReachedThreshold: DEFAULT_END_REACHED_THRESHOLD,
+  fill: false,
   height: DEFAULT_GRID_HEIGHT,
   hasMore: true,
   loading: false,
@@ -59,6 +60,7 @@ const props = withDefaults(defineProps<DataGridProps<T>>(), {
   showCheckboxColumn: false,
   showHeaderCheckbox: true,
   sort: null,
+  virtualized: false,
 });
 
 const emit = defineEmits<DataGridEmits<T>>();
@@ -83,15 +85,31 @@ const columnSizingState = computed(() => props.columnSizing?.widths ?? internalC
 const rootClassName = computed(() =>
   cn(
     'w-full text-hugo-text-default',
+    props.fill && 'h-full min-h-0',
     isColumnResizing.value && 'select-none',
     props.class,
     attrs.class
   )
 );
 
-const viewportStyle = computed(() => ({
-  height: typeof props.height === 'number' ? `${props.height}px` : props.height,
-}));
+const frameClassName = computed(() =>
+  cn(
+    'overflow-hidden rounded-lg border border-hugo-neutral-500 bg-hugo-surface-default',
+    props.fill && 'flex h-full min-h-0 flex-col'
+  )
+);
+
+const viewportClassName = computed(() =>
+  cn('relative overflow-auto bg-hugo-surface-default', props.fill && 'min-h-0 flex-auto')
+);
+
+const viewportStyle = computed(() =>
+  props.fill
+    ? undefined
+    : {
+        height: typeof props.height === 'number' ? `${props.height}px` : props.height,
+      }
+);
 
 const tableColumns = computed<ColumnDef<T>[]>(() => {
   const columns = props.columns.map((column) => ({
@@ -172,9 +190,14 @@ const visibleRange = computed(() => {
 
   return { start, end };
 });
-const virtualRows = computed(() =>
-  tableRows.value.slice(visibleRange.value.start, visibleRange.value.end).map((row, offset) => {
-    const index = visibleRange.value.start + offset;
+const bodyRows = computed(() => {
+  const start = props.virtualized ? visibleRange.value.start : 0;
+  const rows = props.virtualized
+    ? tableRows.value.slice(visibleRange.value.start, visibleRange.value.end)
+    : tableRows.value;
+
+  return rows.map((row, offset) => {
+    const index = start + offset;
 
     return {
       index,
@@ -183,7 +206,12 @@ const virtualRows = computed(() =>
       start: index * props.rowHeight,
       size: props.rowHeight,
     };
-  })
+  });
+});
+const bodyRowGroupStyle = computed(() =>
+  props.virtualized
+    ? { ...tableWidthStyle.value, height: `${totalBodyHeight.value}px` }
+    : tableWidthStyle.value
 );
 const skeletonRows = computed(() => Math.min(props.pagination?.pageSize ?? 8, 10));
 const shouldRenderLoadingMore = computed(
@@ -252,7 +280,7 @@ watch(
 );
 
 watch(
-  () => props.height,
+  () => [props.height, props.fill] as const,
   async () => {
     await nextTick();
     measureViewport();
@@ -607,13 +635,13 @@ function handleSort(columnId: string) {
 
 <template>
   <div v-bind="{ ...attrs, class: undefined }" :class="rootClassName">
-    <div class="overflow-hidden rounded-lg border border-hugo-neutral-500 bg-hugo-surface-default">
+    <div :class="frameClassName">
       <div
         ref="viewportRef"
         :aria-colcount="visibleColumns.length"
         :aria-label="ariaLabel"
         :aria-rowcount="ariaRowCount"
-        class="relative overflow-auto bg-hugo-surface-default"
+        :class="viewportClassName"
         role="grid"
         :style="viewportStyle"
         @scroll="handleScroll"
@@ -746,35 +774,39 @@ function handleSort(columnId: string) {
 
           <div
             v-else
-            class="relative min-w-full"
+            class="min-w-full"
+            :class="virtualized && 'relative'"
             role="rowgroup"
-            :style="{ ...tableWidthStyle, height: `${totalBodyHeight}px` }"
+            :style="bodyRowGroupStyle"
           >
             <div
-              v-for="virtualRow in virtualRows"
-              :key="virtualRow.key"
-              :aria-rowindex="virtualRow.index + 2"
-              :aria-selected="selectedRowId === getRowId(virtualRow.row.original) || undefined"
-              class="absolute left-0 top-0 grid min-w-full border-b border-hugo-neutral-500 outline-none"
+              v-for="bodyRow in bodyRows"
+              :key="bodyRow.key"
+              :aria-rowindex="bodyRow.index + 2"
+              :aria-selected="selectedRowId === getRowId(bodyRow.row.original) || undefined"
+              class="grid min-w-full border-b border-hugo-neutral-500 outline-none"
               :class="[
+                virtualized && 'absolute left-0 top-0',
                 isRowInteractive &&
                   'cursor-pointer hover:[&_.hugo-ui-data-grid-cell]:bg-hugo-surface-tinted focus-visible:[&_.hugo-ui-data-grid-cell]:ring-2 focus-visible:[&_.hugo-ui-data-grid-cell]:ring-inset focus-visible:[&_.hugo-ui-data-grid-cell]:ring-hugo-focus',
-                selectedRowId === getRowId(virtualRow.row.original) &&
+                selectedRowId === getRowId(bodyRow.row.original) &&
                   '[&_.hugo-ui-data-grid-cell]:bg-hugo-surface-tinted',
               ]"
               role="row"
               :tabindex="isRowInteractive ? 0 : undefined"
-              :style="{
-                ...tableWidthStyle,
-                gridTemplateColumns,
-                height: `${virtualRow.size}px`,
-                transform: `translateY(${virtualRow.start}px)`,
-              }"
-              @click="isRowInteractive && activateRow(virtualRow.row.original)"
-              @keydown="handleRowKeydown($event, virtualRow.row.original)"
+              :style="[
+                {
+                  ...tableWidthStyle,
+                  gridTemplateColumns,
+                  height: `${bodyRow.size}px`,
+                },
+                virtualized ? { transform: `translateY(${bodyRow.start}px)` } : undefined,
+              ]"
+              @click="isRowInteractive && activateRow(bodyRow.row.original)"
+              @keydown="handleRowKeydown($event, bodyRow.row.original)"
             >
               <div
-                v-for="(cell, cellIndex) in virtualRow.row.getVisibleCells()"
+                v-for="(cell, cellIndex) in bodyRow.row.getVisibleCells()"
                 :key="cell.id"
                 :aria-colindex="cellIndex + 1"
                 class="hugo-ui-data-grid-cell box-border flex h-full items-center overflow-hidden bg-hugo-surface-default px-4 text-sm leading-5 text-hugo-text-default"

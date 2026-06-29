@@ -138,6 +138,23 @@ kept separate from `rowClick` and `selectedRowIdChange`. Use `showHeaderCheckbox
 header select-all checkbox when bulk selection is not desired. The checkbox column participates in
 column resizing.
 
+For layouts where the parent owns the available height, prefer `fill` so the root, border wrapper,
+and internal grid viewport form a reliable full-height scroll chain:
+
+```vue
+<DataGrid fill :columns="columns" :rows="rows" :get-row-id="getRowId" />
+```
+
+Use `height` for fixed viewport sizes, such as `<DataGrid height="420px" />`. Existing calculated
+heights like `height="calc(100vh - 320px)"` remain supported for compatibility.
+
+`DataGrid` renders every row by default, which is preferred for small tables. Pass `virtualized` for
+long lists that should render only the visible row window:
+
+```vue
+<DataGrid virtualized :columns="columns" :rows="rows" :get-row-id="getRowId" />
+```
+
 `DataGrid` also exposes an `endReached` event for infinite-scroll integrations. Use `hasMore`,
 `loadingMore`, and `endReachedThreshold` to coordinate external paging logic; the grid does not fetch
 data directly.

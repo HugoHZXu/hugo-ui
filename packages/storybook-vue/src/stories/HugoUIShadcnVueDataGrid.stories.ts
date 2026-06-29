@@ -141,6 +141,12 @@ const previewStyle = {
   width: 'min(100%, 1120px)',
 };
 
+const fillPreviewStyle = {
+  ...previewStyle,
+  height: '560px',
+  minHeight: 0,
+};
+
 const meta = {
   title: 'Hugo UI Shadcn Vue/Molecule/DataGrid',
   component: DataGrid as never,
@@ -150,6 +156,7 @@ const meta = {
     columns,
     rows: entries.slice(0, 12),
     getRowId: (row: ExampleEntry) => row.id,
+    fill: false,
     height: 420,
     rowHeight: 52,
     overscan: 8,
@@ -164,6 +171,7 @@ const meta = {
     showCheckboxColumn: false,
     showHeaderCheckbox: true,
     sort: null,
+    virtualized: false,
   },
   argTypes: {
     ariaLabel: {
@@ -189,17 +197,29 @@ const meta = {
     },
     height: {
       control: { type: 'number' },
-      description: 'Scroll viewport height. Numbers are treated as pixels.',
+      description:
+        'Fixed scroll viewport height when `fill` is false. Numbers are treated as pixels.',
       table: { type: { summary: 'number | string' }, defaultValue: { summary: '420' } },
+    },
+    fill: {
+      control: { type: 'boolean' },
+      description:
+        'Fills the parent container height and lets the grid viewport take the remaining internal space.',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+    },
+    virtualized: {
+      control: { type: 'boolean' },
+      description: 'Renders only the visible row window for long lists. Disabled by default.',
+      table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
     },
     rowHeight: {
       control: { type: 'number' },
-      description: 'Fixed body row height used by virtual rendering.',
+      description: 'Fixed body row height used for body rows and virtual calculations.',
       table: { type: { summary: 'number' }, defaultValue: { summary: '52' } },
     },
     overscan: {
       control: { type: 'number' },
-      description: 'Extra rows rendered above and below the viewport.',
+      description: 'Extra rows rendered above and below the viewport when `virtualized` is true.',
       table: { type: { summary: 'number' }, defaultValue: { summary: '8' } },
     },
     endReachedThreshold: {
@@ -322,7 +342,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Generic Vue data grid built on @tanstack/vue-table. Sorting is opt-in at two levels: a column must set `sortable: true`, and the grid must receive `@sort-change`.',
+          'Generic Vue data grid built on @tanstack/vue-table. It renders every row by default for small tables; pass `virtualized` for long lists. Use `fill` when the parent owns the available height, or `height` for a fixed viewport. Sorting is opt-in at two levels: a column must set `sortable: true`, and the grid must receive `@sort-change`.',
       },
     },
   },
@@ -341,6 +361,29 @@ export const Resizable: Story = {
     template: `
       <div :style="previewStyle">
         <DataGrid v-bind="args" />
+      </div>
+    `,
+  }),
+};
+
+export const FillParent: Story = {
+  render: () => ({
+    components: { DataGrid },
+    setup() {
+      return { columns, fillPreviewStyle, longEntries };
+    },
+    template: `
+      <div :style="fillPreviewStyle">
+        <DataGrid
+          fill
+          aria-label="Full-height entries"
+          :columns="columns"
+          :rows="longEntries"
+          :get-row-id="(row) => row.id"
+          :row-height="52"
+          :overscan="8"
+          virtualized
+        />
       </div>
     `,
   }),
@@ -542,6 +585,7 @@ export const LongList: Story = {
           :height="520"
           :row-height="52"
           :overscan="8"
+          virtualized
         />
       </div>
     `,
@@ -590,6 +634,7 @@ export const InfiniteScrollMock: Story = {
           :end-reached-threshold="120"
           :has-more="hasMore"
           :loading-more="loadingMore"
+          virtualized
           @end-reached="handleEndReached"
         />
       </div>

@@ -94,6 +94,27 @@ describe('DataGrid', () => {
     expect(wrapper.text()).toContain('Ready');
   });
 
+  it('applies fixed viewport height when fill is false', () => {
+    const wrapper = mountDataGrid({ height: 360 });
+
+    expect(wrapper.get('[role="grid"]').attributes('style')).toContain('height: 360px');
+  });
+
+  it('applies a full-height layout chain when fill is true', () => {
+    const wrapper = mountDataGrid({ fill: true });
+    const frame = wrapper.element.firstElementChild as HTMLElement;
+    const viewport = wrapper.get('[role="grid"]');
+
+    expect(wrapper.classes()).toEqual(expect.arrayContaining(['h-full', 'min-h-0']));
+    expect(Array.from(frame.classList)).toEqual(
+      expect.arrayContaining(['flex', 'h-full', 'min-h-0', 'flex-col'])
+    );
+    expect(viewport.classes()).toEqual(
+      expect.arrayContaining(['flex-auto', 'min-h-0', 'overflow-auto'])
+    );
+    expect(viewport.attributes('style') ?? '').not.toContain('height');
+  });
+
   it('does not enable sorting without a sort-change listener', () => {
     const wrapper = mountDataGrid();
 
@@ -116,12 +137,25 @@ describe('DataGrid', () => {
     expect(onSortChange).toHaveBeenLastCalledWith({ columnId: 'label', direction: 'desc' });
   });
 
-  it('virtualizes long row sets instead of rendering every row', () => {
+  it('renders every row by default', () => {
     const wrapper = mountDataGrid({
       height: 156,
       overscan: 1,
       rowHeight: 52,
       rows: createRows(200),
+    });
+
+    expect(wrapper.text()).toContain('Item 1');
+    expect(wrapper.text()).toContain('Item 200');
+  });
+
+  it('virtualizes long row sets when virtualized is true', () => {
+    const wrapper = mountDataGrid({
+      height: 156,
+      overscan: 1,
+      rowHeight: 52,
+      rows: createRows(200),
+      virtualized: true,
     });
 
     expect(wrapper.text()).toContain('Item 1');
