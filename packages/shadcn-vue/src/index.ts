@@ -22,6 +22,13 @@ export type {
   StatusBadgeTone,
   StatusBadgeVariant,
 } from './components/ui/status-badge/statusBadge';
+export { default as Link } from './components/ui/link/Link.vue';
+export { linkVariants } from './components/ui/link/link';
+export type {
+  HugoUIShadcnVueLinkMode,
+  HugoUIShadcnVueLinkSize,
+  LinkProps,
+} from './components/ui/link/link';
 export { default as Input } from './components/ui/input/Input.vue';
 export type {
   InputClassNames,

@@ -19,6 +19,7 @@ import {
   DropdownMenuSeparator,
   FileDropzone,
   Input,
+  Link,
   MetricTile,
   Modal,
   ModalContentText,
@@ -54,6 +55,7 @@ const steps = [
     <Select v-model="action" label="Action" :options="actions" />
     <Combobox v-model="selectedItem" label="Searchable item" :options="searchableItems" clearable />
     <Checkbox label="Enable sample option" />
+    <Link href="#sample-note">Read sample note</Link>
     <Button type="submit">Save</Button>
   </form>
 
@@ -107,6 +109,10 @@ and `classNames` or `slotProps` for slot-level styling.
 `StatusBadge` maps common UI status strings such as `ready`, `warning`, `blocked`, `success`, and
 `failed` to semantic tones. Override `tone` when a product needs a different mapping, and use
 `variant`, `size`, `showDot`, or the `icon` slot for presentation changes.
+
+`Link` renders inline navigation text with Hugo UI color modes, small or medium text sizes,
+disabled and loading states, and automatic `_blank` accessibility labels. Use `mode="dark"` on
+dark surfaces and `mode="error"` when the link represents a destructive or error-focused action.
 
 `EmptyState` and `ErrorState` render compact feedback blocks for empty tables, empty sections,
 unavailable content, and retryable errors. Use the `action` slot for buttons or links; examples
