@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
+import { h } from 'vue';
 
 import DataGrid from './DataGrid.vue';
 import {
@@ -136,6 +137,34 @@ describe('DataGrid', () => {
       expect.arrayContaining(['flex-auto', 'min-h-0', 'overflow-auto'])
     );
     expect(viewport.attributes('style') ?? '').not.toContain('height');
+  });
+
+  it('lets rendered cell content fill the data-grid cell', () => {
+    const wrapper = mountDataGrid({
+      columns: [
+        {
+          id: 'label',
+          header: 'Item',
+          minWidth: 220,
+          render: (row: ExampleRow) =>
+            h('input', {
+              'aria-label': `Edit ${row.label}`,
+              class: 'w-full',
+              value: row.label,
+            }),
+        },
+      ] satisfies DataGridColumn<ExampleRow>[],
+      rows: rows.slice(0, 1),
+    });
+
+    const field = wrapper.get('[aria-label="Edit Item 1"]');
+    const content = field.element.parentElement as HTMLElement;
+
+    expect(content.dataset.slot).toBe('data-grid-cell-content');
+    expect(Array.from(content.classList)).toEqual(
+      expect.arrayContaining(['block', 'w-full', 'min-w-0'])
+    );
+    expect(content.closest('.hugo-ui-data-grid-cell')).not.toBeNull();
   });
 
   it('does not enable sorting without a sort-change listener', () => {

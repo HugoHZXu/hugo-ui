@@ -143,7 +143,10 @@ const viewportClassName = computed(() => cn('max-h-72 p-0', props.classNames?.vi
 const groupLabelClassName = computed(() => cn(choiceGroupLabelClass, props.classNames?.groupLabel));
 const itemClassName = computed(() => cn(choiceItemClass, props.classNames?.item));
 const itemIndicatorClassName = computed(() =>
-  cn('mt-0.5 grid size-4 shrink-0 place-items-center text-current', props.classNames?.itemIndicator)
+  cn(
+    'grid size-4 shrink-0 place-items-center self-center text-current',
+    props.classNames?.itemIndicator
+  )
 );
 const itemTextClassName = computed(() => cn('min-w-0 flex-1 truncate', props.classNames?.itemText));
 const helperClassName = computed(() =>
@@ -308,17 +311,17 @@ function handleTriggerKeydown(event: KeyboardEvent) {
                 :text-value="String(option.label)"
                 :value="option.value"
               >
+                <SelectItemText :class="itemTextClassName" data-slot="select-item-text">
+                  <slot name="option" :option="option">
+                    {{ option.label }}
+                  </slot>
+                </SelectItemText>
                 <SelectItemIndicator
                   :class="itemIndicatorClassName"
                   data-slot="select-item-indicator"
                 >
                   <Check aria-hidden="true" :size="16" />
                 </SelectItemIndicator>
-                <SelectItemText :class="itemTextClassName" data-slot="select-item-text">
-                  <slot name="option" :option="option">
-                    {{ option.label }}
-                  </slot>
-                </SelectItemText>
               </SelectItem>
             </SelectGroup>
           </SelectViewport>

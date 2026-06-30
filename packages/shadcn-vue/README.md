@@ -23,6 +23,12 @@ import {
   MetricTile,
   Modal,
   ModalContentText,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
   Progress,
   Select,
   StatusBadge,
@@ -66,6 +72,22 @@ const steps = [
   <MetricTile label="Ready" :value="24" description="items available" tone="success" />
   <StatusBadge status="ready" show-dot />
   <Progress label="Processing" :model-value="64" show-value />
+  <Pagination aria-label="Example pages" :default-page="2" :items-per-page="10" :total="30">
+    <PaginationContent>
+      <PaginationItem>
+        <PaginationPrevious as="a" href="#previous" />
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationLink href="#page-1">1</PaginationLink>
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationLink href="#page-2" is-active>2</PaginationLink>
+      </PaginationItem>
+      <PaginationItem>
+        <PaginationNext as="a" href="#next" />
+      </PaginationItem>
+    </PaginationContent>
+  </Pagination>
   <WorkflowStepper :steps="steps" />
   <FileDropzone v-model="files" accept=".csv,.txt" title="Upload a sample file" />
 
@@ -128,6 +150,10 @@ groups, the `icon` slot for leading icons, and `shortcut` for shortcut text.
 `Progress` renders determinate or indeterminate operation feedback. Use `modelValue` with
 `showValue` for known progress, `indeterminate` for unknown progress, and semantic `tone` values for
 success, warning, or danger states.
+
+`Pagination` wraps reka-ui pagination primitives for page navigation. Use `v-model:page`, `total`,
+`itemsPerPage`, `siblingCount`, and `showEdges` for generated page ranges, or compose
+`PaginationItem` with `PaginationLink` for static linked pagination.
 
 `WorkflowStepper` renders vertical workflow or timeline-style progress with pending, active,
 success, warning, and error states. It supports optional clickable steps through `clickable` and

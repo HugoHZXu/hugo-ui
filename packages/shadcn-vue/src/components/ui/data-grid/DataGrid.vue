@@ -829,7 +829,10 @@ function handleSort(columnId: string) {
                 :class="getAlignmentClassName(getColumnMeta(cell.column)?.align)"
                 role="gridcell"
               >
-                <span class="min-w-0 overflow-hidden text-ellipsis whitespace-nowrap">
+                <span
+                  class="block w-full min-w-0 overflow-hidden text-ellipsis whitespace-nowrap"
+                  data-slot="data-grid-cell-content"
+                >
                   <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                 </span>
               </div>

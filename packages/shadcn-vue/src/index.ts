@@ -119,6 +119,35 @@ export type {
   DataGridSort,
 } from './components/ui/data-grid/dataGrid';
 export {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationItem,
+  PaginationLast,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  paginationContentClass,
+  paginationControlVariants,
+  paginationEllipsisClass,
+  paginationRootClass,
+} from './components/ui/pagination';
+export type {
+  PaginationContentProps,
+  PaginationControlSize,
+  PaginationEllipsisProps,
+  PaginationEmits,
+  PaginationFirstProps,
+  PaginationItemProps,
+  PaginationLastProps,
+  PaginationLinkEmits,
+  PaginationLinkProps,
+  PaginationNextProps,
+  PaginationPreviousProps,
+  PaginationProps,
+} from './components/ui/pagination';
+export {
   Modal,
   ModalContentText,
   ModalFooter,

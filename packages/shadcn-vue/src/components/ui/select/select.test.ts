@@ -66,6 +66,35 @@ describe('Select', () => {
     expect(items[1].hasAttribute('data-disabled')).toBe(true);
   });
 
+  it('renders the selected indicator after the item text and centered in the option block', async () => {
+    const wrapper = mount(Select, {
+      props: {
+        defaultOpen: true,
+        defaultValue: 'assign',
+        forceMount: true,
+        options,
+      },
+      attachTo: document.body,
+    });
+    wrappers.push(wrapper);
+    await nextTick();
+
+    const selectedItem = document.body.querySelector(
+      '[data-slot="select-item"][data-value="assign"]'
+    );
+    const childSlots = Array.from(selectedItem?.children ?? []).map((child) =>
+      child.getAttribute('data-slot')
+    );
+    const indicator = selectedItem?.querySelector('[data-slot="select-item-indicator"]');
+
+    expect(childSlots.indexOf('select-item-text')).toBeGreaterThanOrEqual(0);
+    expect(childSlots.indexOf('select-item-indicator')).toBeGreaterThanOrEqual(0);
+    expect(childSlots.indexOf('select-item-text')).toBeLessThan(
+      childSlots.indexOf('select-item-indicator')
+    );
+    expect(indicator?.className).toContain('self-center');
+  });
+
   it('opens options from the trigger keyboard interaction', async () => {
     const wrapper = mount(Select, {
       props: {

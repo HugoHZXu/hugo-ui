@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
 import { computed, h, onBeforeUnmount, ref } from 'vue';
-import { Badge, DataGrid } from '@hugo-ui/shadcn-vue';
+import { Badge, DataGrid, Input } from '@hugo-ui/shadcn-vue';
 import type { DataGridColumn, DataGridColumnSizing, DataGridSort } from '@hugo-ui/shadcn-vue';
 
 type ExampleEntry = {
@@ -136,6 +136,35 @@ const columns: DataGridColumn<ExampleEntry>[] = [
 const flexibleColumns: DataGridColumn<ExampleEntry>[] = columns.map((column) =>
   column.id === 'label' || column.id === 'section' ? { ...column, grow: true } : column
 );
+
+const editableColumns: DataGridColumn<ExampleEntry>[] = [
+  {
+    id: 'label',
+    header: 'Item',
+    minWidth: 260,
+    grow: true,
+    render: (row) =>
+      h(Input, {
+        'aria-label': `Edit ${row.label}`,
+        class: 'w-full',
+        modelValue: row.label,
+        readonly: true,
+        size: 'sm',
+      }),
+  },
+  {
+    id: 'section',
+    header: 'Section',
+    minWidth: 160,
+    render: (row) => row.section,
+  },
+  {
+    id: 'state',
+    header: 'State',
+    minWidth: 130,
+    render: (row) => h(Badge, { tone: stateToneMap[row.state] }, () => row.state),
+  },
+];
 
 const previewStyle = {
   background: 'var(--hugo-ui-shadcn-surface-subtle)',
@@ -461,6 +490,26 @@ export const FlexibleColumns: Story = {
           aria-label="Flexible column entries"
           :columns="flexibleColumns"
           :rows="entries.slice(0, 16)"
+          :get-row-id="(row) => row.id"
+          :height="420"
+        />
+      </div>
+    `,
+  }),
+};
+
+export const FullWidthCellContent: Story = {
+  render: () => ({
+    components: { DataGrid },
+    setup() {
+      return { editableColumns, entries, previewStyle };
+    },
+    template: `
+      <div :style="previewStyle">
+        <DataGrid
+          aria-label="Editable cell entries"
+          :columns="editableColumns"
+          :rows="entries.slice(0, 8)"
           :get-row-id="(row) => row.id"
           :height="420"
         />
