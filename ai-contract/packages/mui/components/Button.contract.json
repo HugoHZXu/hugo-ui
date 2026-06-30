@@ -690,7 +690,7 @@
     },
     {
       "id": "button-type",
-      "rule": "Use type=\"button\" unless the button is intentionally submitting or resetting a form.",
+      "rule": "Use type=\"button\" unless the button submits or resets a form.",
       "source": "packages/storybook/src/stories/Button.stories.tsx"
     }
   ],
@@ -731,6 +731,6 @@
   },
   "needsReview": true,
   "needsReviewReason": "First contract version includes component-authored props plus selected inherited props that are used by source, stories, or tests. Review before treating all inherited MUI escape hatches as covered.",
-  "generatedAt": "2026-06-26T17:54:34.857Z",
-  "sourceCommit": "af8311c13607423b85503c1d1a92ef8a44145648"
+  "generatedAt": "2026-06-30T16:32:41.033Z",
+  "sourceCommit": "98315e30cb7b42e0688088a19e8f9939b43e2888"
 }

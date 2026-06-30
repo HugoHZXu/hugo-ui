@@ -53,7 +53,7 @@
         "feedback"
       ],
       "defaultValue": "transactional",
-      "description": "Visual and behavioral intent of the modal.",
+      "description": "Visual and behavioral variant of the modal.",
       "source": "typescript:component:packages/mui/src/Modal/Modal.tsx#HugoUIModalProps.type",
       "aiUsage": "normal"
     },
@@ -1014,7 +1014,7 @@
     "usesSemanticRoles": true,
     "preferredTokenLayer": "theme.hugoUIColorRoles",
     "generationPolicy": [
-      "Use type to choose visual intent instead of overriding modal colors.",
+      "Use type to choose the modal variant instead of overriding modal colors.",
       "Do not hardcode header, icon, footer, focus, warning, or error colors.",
       "Use buttonDefs to customize modal actions rather than replacing the footer by default."
     ]
@@ -1083,7 +1083,7 @@
     ]
   },
   "needsReview": true,
-  "needsReviewReason": "First contract version captures Modal and ModalFooter public structures, but inherited Dialog props are intentionally not exhaustively recommended.",
-  "generatedAt": "2026-06-26T17:54:34.857Z",
-  "sourceCommit": "af8311c13607423b85503c1d1a92ef8a44145648"
+  "needsReviewReason": "First contract version captures Modal and ModalFooter public structures, but inherited Dialog props are not exhaustively recommended.",
+  "generatedAt": "2026-06-30T16:32:41.033Z",
+  "sourceCommit": "98315e30cb7b42e0688088a19e8f9939b43e2888"
 }

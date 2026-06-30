@@ -1,18 +1,18 @@
 # @hugo-ui/shadcn
 
-React component library scaffolded from the `hugo-ui` package infrastructure, but built around
-Tailwind CSS and shadcn-style primitives instead of MUI.
+English | [简体中文](./README.zh-CN.md)
 
-## Package shape
+Lightweight React components for Hugo UI, built with Tailwind CSS, Radix UI primitives, and shadcn-style composition patterns. This is the lighter alternative to `@hugo-ui/mui`, with its own stylesheet and design tokens.
 
-This package is structured like a publishable npm package, while this workspace consumes it through
-`pnpm` workspace links during local development.
+## Installation
 
-Consumer-facing imports intentionally keep npm-style package names, as shown below.
+```bash
+npm install @hugo-ui/shadcn react react-dom
+```
 
-## Usage
+> **Note**: Your application needs to have Tailwind CSS configured. Import the package stylesheet once at your app entry point.
 
-Import the library stylesheet once in your app entry:
+## Quick Start
 
 ```tsx
 import { useState } from 'react';
@@ -41,7 +41,7 @@ export function App() {
         <CardContent>
           <Input label="Item name" />
           <Button className="mt-4" onClick={() => setOpen(true)} tone="brand" variant="solid">
-            Create
+            Save
           </Button>
         </CardContent>
       </Card>
@@ -52,33 +52,38 @@ export function App() {
         open={open}
         title="Sample modal"
       >
-        <ModalContentText>Review this sample note before saving.</ModalContentText>
+        <ModalContentText>Confirm the selected example before saving.</ModalContentText>
       </Modal>
     </HugoUIShadcnProvider>
   );
 }
 ```
 
-## Development
+## Available Components
 
-This package expects the consuming app to process Tailwind CSS. The distributed `styles.css`
-contains the Tailwind entrypoints, design tokens, base styles, and component style imports.
+- **Actions & Badges**: `Button`, `Badge`
+- **Forms**: `Input`
+- **Layout**: `Card`, `CardHeader`, `CardContent`, `CardFooter`, `CardTitle`, `CardDescription`
+- **Dialog Primitives**: `Dialog`, `DialogContent`, `DialogTitle`, `DialogDescription`
+- **Modal Layer**: `Modal`, `ModalTitle`, `ModalFooter`, `ModalContentText`, `ModalLoadingIndicator`
+- **Utilities**: `HugoUIShadcnProvider`, `cn`
 
-Style ownership is split by layer:
+## Styling Architecture
 
-- `src/styles/globals.css` is the package style entrypoint.
-- `src/styles/tokens.css` owns Hugo UI color roles and Tailwind theme variables.
-- `src/styles/base.css` owns only the baseline reset.
-- Simple components such as `Button` keep their default variants in `cva`. Button uses
-  `variant`, `tone`, and `size` variants, with component tokens defined in `tokens.css`.
-- Button exposes `data-slot`, `data-variant`, `data-tone`, `data-size`, `data-loading`,
-  `data-icon-only`, and `data-disabled` as its public styling contract. Compose icons as
-  children and use Tailwind utilities such as `w-full` through `className`.
-- Compound components can expose stable styling hooks. `Input` uses
-  `data-component="hugo-input"` with slots such as `root`, `label`, `control`, `input`,
-  `textarea`, `adornment`, `helper`, `counter`, `status`, `spinner`, and `required-mark`.
-  Input customization uses `slotProps` for native attributes and `classNames` for slot-level
-  styling.
-- `Modal` is a Hugo semantic layer over the Radix Dialog primitive. It exposes stable slots such as
-  `modal-header`, `modal-title`, `modal-body`, `modal-footer`, and `modal-loading-indicator`, plus
-  `classNames` and `slotProps` for targeted customization.
+The distributed stylesheet includes Tailwind directives, design tokens, base styles, and component styles:
+
+- `src/styles/globals.css` - Main stylesheet entry point
+- `src/styles/tokens.css` - Hugo UI color roles and Tailwind theme variables
+- `src/styles/base.css` - Base CSS reset
+- Component variants use `class-variance-authority` where appropriate
+- Components expose stable `data-*` attributes and `className` for controlled customization
+
+## Local Development
+
+From the repository root:
+
+```bash
+pnpm --filter @hugo-ui/shadcn run test
+pnpm --filter @hugo-ui/shadcn run typecheck
+pnpm --filter @hugo-ui/shadcn run build
+```

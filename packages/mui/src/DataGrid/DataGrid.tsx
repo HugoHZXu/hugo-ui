@@ -230,7 +230,7 @@ export function HugoUIDataGrid<T>({
     [columns, columnSizingState]
   );
 
-  // TanStack Table intentionally returns instance methods; the instance stays local to DataGrid.
+  // TanStack Table returns instance methods; the instance stays local to DataGrid.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: rows,

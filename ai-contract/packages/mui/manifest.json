@@ -3,8 +3,8 @@
   "packageName": "@hugo-ui/mui",
   "packageVersion": "1.0.3",
   "sourcePackagePath": "packages/mui",
-  "generatedAt": "2026-06-26T17:54:34.857Z",
-  "sourceCommit": "af8311c13607423b85503c1d1a92ef8a44145648",
+  "generatedAt": "2026-06-30T16:32:41.033Z",
+  "sourceCommit": "98315e30cb7b42e0688088a19e8f9939b43e2888",
   "components": [
     {
       "componentName": "Button",
@@ -59,7 +59,7 @@
       ],
       "propsTypeName": "HugoUIModalProps",
       "needsReview": true,
-      "needsReviewReason": "First contract version captures Modal and ModalFooter public structures, but inherited Dialog props are intentionally not exhaustively recommended."
+      "needsReviewReason": "First contract version captures Modal and ModalFooter public structures, but inherited Dialog props are not exhaustively recommended."
     }
   ],
   "tokenContract": "tokens/token-map.contract.json",

@@ -1,73 +1,94 @@
-# HugoUI
+# @hugo-ui/mui
 
-React component library for the HugoUI design system.
+English | [简体中文](./README.zh-CN.md)
 
-## Package shape
+React components for Hugo UI, built with MUI (Material UI) and Emotion. This package provides reusable UI components, layout templates, semantic theming, internationalization support, and comprehensive tests.
 
-This package is structured like a publishable npm package, while this workspace consumes it through
-`pnpm` workspace links during local development.
+## Installation
 
-Consumer-facing imports intentionally keep npm-style package names, as shown below.
+```bash
+npm install @hugo-ui/mui @mui/material @mui/icons-material @emotion/react @emotion/styled react react-dom react-intl
+```
 
-## Usage
+Optional font packages for offline font loading:
+
+```bash
+npm install @fontsource/noto-sans @fontsource/noto-sans-jp @fontsource/noto-sans-thai @fontsource/noto-sans-arabic
+```
+
+## Quick Start
+
+Wrap your application with `HugoUIProvider` at the root, then import components directly from the package:
 
 ```tsx
 import { useState } from 'react';
-import { Button, DataGrid, Input, HugoUIProvider, hugoUITheme } from '@hugo-ui/mui';
-import type { DataGridSort } from '@hugo-ui/mui';
+import { Button, DataGrid, HugoUIProvider, Input, hugoUITheme } from '@hugo-ui/mui';
+import type { DataGridColumn, DataGridSort } from '@hugo-ui/mui';
 
-const rows = [{ id: 'entry-1', label: 'Sample entry' }];
-const columns = [
-  {
-    id: 'label',
-    header: 'Item',
-    sortable: true,
-    minWidth: 160,
-    render: (row: (typeof rows)[number]) => row.label,
-  },
+type Row = { id: string; label: string; section: string };
+
+const rows: Row[] = [{ id: 'entry-1', label: 'Sample entry', section: 'Alpha' }];
+const columns: DataGridColumn<Row>[] = [
+  { id: 'label', header: 'Item', sortable: true, minWidth: 160, render: (row) => row.label },
+  { id: 'section', header: 'Section', minWidth: 140, render: (row) => row.section },
 ];
 
 export function App() {
   const [sort, setSort] = useState<DataGridSort>(null);
 
   return (
-    <HugoUIProvider theme={hugoUITheme}>
-      <Button>Click</Button>
-      <Input label="Name" />
+    <HugoUIProvider theme={hugoUITheme} locale="en">
+      <Input label="Item name" />
+      <Button type="button">Save</Button>
       <DataGrid
         ariaLabel="Example entries"
         columns={columns}
-        rows={rows}
         getRowId={(row) => row.id}
-        sort={sort}
         onSortChange={setSort}
+        rows={rows}
+        sort={sort}
       />
     </HugoUIProvider>
   );
 }
 ```
 
-## Fonts (online/offline)
+## Available Components
 
-HugoUI can load Noto Sans automatically at runtime. By default, `HugoUIProvider` tries to load
-local `@fontsource` files first (offline), and falls back to Google Fonts if they are not present.
+- **Actions & Links**: `Button`, `Link`, `ButtonLink`
+- **Inputs & Controls**: `Input`, `SearchBox`, `Toggle`
+- **Feedback & Status**: `Message`, `StatusTag`, `Modal`, `Feedback`
+- **Data Display**: `Table`, `DataGrid`, `DetailCard`
+- **Layout**: `PageTemplate`, `ContentTemplate`
+- **Typography & Theming**: `Typography`, `hugoUITheme`, `HugoUIProvider`
 
-Install the local font packages for offline use:
+## Provider & Internationalization
 
-```bash
-npm install @fontsource/noto-sans @fontsource/noto-sans-jp @fontsource/noto-sans-thai @fontsource/noto-sans-arabic
-```
-
-You can control loading behavior:
+`HugoUIProvider` integrates MUI theming, Hugo UI global styles, React Intl for i18n, Emotion cache configuration, font loading, and RTL (right-to-left) layout support.
 
 ```tsx
-<HugoUIProvider theme={hugoUITheme} fontLoading="auto" />
-// fontLoading: 'auto' | 'local' | 'remote' | 'none'
+<HugoUIProvider locale="ar" messages={messages} fontLoading="auto">
+  <App />
+</HugoUIProvider>
 ```
 
-## Subpath exports
+The `fontLoading` prop accepts: `auto`, `local`, `remote`, or `none`.
+
+## Subpath Imports
+
+You can also import utilities and theme tokens directly from subpaths:
 
 ```ts
-import { onEnterKeyPress } from '@hugo-ui/mui/utils/wcagUtils';
 import { hugoUITheme } from '@hugo-ui/mui/styles/theme';
+import { onEnterKeyPress } from '@hugo-ui/mui/utils/wcagUtils';
+```
+
+## Local Development
+
+From the repository root:
+
+```bash
+pnpm --filter @hugo-ui/mui run test
+pnpm --filter @hugo-ui/mui run typecheck
+pnpm --filter @hugo-ui/mui run build
 ```

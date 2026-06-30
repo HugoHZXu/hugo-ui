@@ -1,39 +1,50 @@
 # Hugo UI
 
-Design-system monorepo for reusable React and Vue component development.
+English | [简体中文](./README.zh-CN.md)
 
-This workspace contains publish-shaped component packages and Storybook demo and verification apps:
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-| Package                  | Purpose                                                  |
-| ------------------------ | -------------------------------------------------------- |
-| `@hugo-ui/mui`           | MUI + Emotion component package for shared interface UI. |
-| `@hugo-ui/shadcn`        | React Tailwind/shadcn-style component package.           |
-| `@hugo-ui/shadcn-vue`    | Vue Tailwind/shadcn-vue component package.               |
-| `@hugo-ui/storybook`     | React Storybook demo and verification surface.           |
-| `@hugo-ui/storybook-vue` | Vue Storybook demo and verification surface.             |
+Hugo UI is a standalone design system monorepo for building reusable React and Vue components. It includes production-ready component libraries and Storybook apps for interactive demos and visual testing.
 
-## Demo
+All examples and documentation use neutral mock data to keep components reusable across different product contexts.
 
-The published Storybook demos are available at:
+## Packages
+
+| Package                                                        | Description                                                                 |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| [`@hugo-ui/mui`](./packages/mui/README.md)                     | React components built with MUI + Emotion, with theming and i18n support.   |
+| [`@hugo-ui/shadcn`](./packages/shadcn/README.md)               | Lightweight React components using Tailwind CSS and shadcn-style patterns.  |
+| [`@hugo-ui/shadcn-vue`](./packages/shadcn-vue/README.md)       | Vue 3 components using Tailwind CSS and shadcn-vue conventions.             |
+| [`@hugo-ui/storybook`](./packages/storybook/README.md)         | React Storybook playground for demos and visual testing.                    |
+| [`@hugo-ui/storybook-vue`](./packages/storybook-vue/README.md) | Vue Storybook playground for demos and visual testing.                      |
+
+## Live Demos
+
+Check out the interactive Storybook demos:
 
 | Demo            | URL                                                                                |
 | --------------- | ---------------------------------------------------------------------------------- |
 | React Storybook | [https://hugohzxu.github.io/hugo-ui/](https://hugohzxu.github.io/hugo-ui/)         |
 | Vue Storybook   | [https://hugohzxu.github.io/hugo-ui/vue/](https://hugohzxu.github.io/hugo-ui/vue/) |
 
-## Package Layout
+## Requirements
 
-```txt
-hugo-ui/
-  packages/
-    mui/
-    shadcn/
-    shadcn-vue/
-    storybook/
-    storybook-vue/
+- Node.js `>=22.12.0`
+- pnpm `>=10.34.1 <11` (pinned to `pnpm@10.34.1` via `packageManager`)
+
+## Quick Start
+
+Install dependencies and use components in your project:
+
+```bash
+# For MUI + Emotion components
+npm install @hugo-ui/mui @mui/material @mui/icons-material @emotion/react @emotion/styled react react-dom react-intl
+
+# For shadcn-style React components
+npm install @hugo-ui/shadcn react react-dom
 ```
 
-## Usage
+Import and use components:
 
 ```tsx
 import { DataGrid, HugoUIProvider, Table } from '@hugo-ui/mui';
@@ -41,63 +52,49 @@ import { Button } from '@hugo-ui/shadcn';
 import '@hugo-ui/shadcn/styles.css';
 ```
 
-## Development
+See individual package READMEs for detailed usage examples.
 
-From this directory:
+## Project Structure
+
+```txt
+hugo-ui/
+  packages/
+    mui/             # MUI + Emotion React components
+    shadcn/          # Tailwind/shadcn React components
+    shadcn-vue/      # Tailwind/shadcn Vue components
+    storybook/       # React Storybook app
+    storybook-vue/   # Vue Storybook app
+```
+
+## Local Development
+
+Run these commands from the repository root:
 
 ```bash
 pnpm install
 pnpm run typecheck
 pnpm run test:all
 pnpm run build:all
-pnpm run storybook
-pnpm run storybook-vue
+
+# Start Storybook dev servers
+pnpm run storybook      # React Storybook on http://localhost:6006
+pnpm run storybook-vue  # Vue Storybook on http://localhost:6007
 ```
 
-## AI Agent Workflow
-
-AI agent instructions live in [`AGENTS.md`](./AGENTS.md). Supporting workflow docs and local skills
-live in:
-
-- [`docs/agent-workflow.md`](./docs/agent-workflow.md)
-- [`docs/desensitization-rules.md`](./docs/desensitization-rules.md)
-- [`.codex/skills`](./.codex/skills)
-
-For non-interactive agent sessions, prefer the local Node wrapper:
-
-```bash
-./scripts/codex-node.sh pnpm run verify
-```
-
-## AI Contract Artifact
-
-The first AI component contract artifact covers `@hugo-ui/mui` components and tokens. The tooling
-lives in the private workspace package `@hugo-ui/ai-contract`, with package-specific inputs declared
-in `ai-contract.config.mjs`. Validate the checked-in contract, decide whether a new release is
-warranted, and pack it with:
-
-```bash
-./scripts/codex-node.sh pnpm run contract:check:mui
-./scripts/codex-node.sh pnpm run contract:decide:mui
-./scripts/codex-node.sh pnpm run contract:pack:mui
-```
-
-`contract:decide:mui` compares stable contract content against the latest `mui-ai-contract-v*`
-release tag while ignoring volatile provenance fields such as `generatedAt` and `sourceCommit`.
-Use its `publish`, `skip`, or `manual-review` decision before creating a new contract release tag.
-
-Tagged releases matching `mui-ai-contract-v*` publish the packed contract as GitHub Release assets
-for downstream Figma/MCP demos.
+> **Note**: Use `./scripts/codex-node.sh <command>` to ensure the correct Node version is loaded from `.nvmrc`.
 
 ## Publishing
 
-The package manifests include public npm package names and publish metadata. Versioning and
-publishing are managed through Changesets:
+Versioning and releases are managed with Changesets:
 
 ```bash
-pnpm run changeset
-pnpm run changeset:version
-pnpm run changeset:publish
+pnpm run changeset          # Create a new changeset
+pnpm run changeset:version  # Bump versions and update changelogs
+pnpm run changeset:publish  # Publish to npm
 ```
 
-Actual npm publication requires access to the `@hugo-ui` npm scope.
+Publishing to npm requires access to the `@hugo-ui` npm organization.
+
+## License
+
+MIT © Hugo UI contributors

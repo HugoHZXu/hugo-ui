@@ -89,7 +89,7 @@
     },
     {
       "id": "button-type",
-      "rule": "Use type=\"button\" unless the button is intentionally submitting or resetting a form.",
+      "rule": "Use type=\"button\" unless the button submits or resets a form.",
       "source": "packages/storybook/src/stories/Button.stories.tsx"
     }
   ],

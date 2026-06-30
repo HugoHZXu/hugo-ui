@@ -54,7 +54,7 @@
     "usesSemanticRoles": true,
     "preferredTokenLayer": "theme.hugoUIColorRoles",
     "generationPolicy": [
-      "Use type to choose visual intent instead of overriding modal colors.",
+      "Use type to choose the modal variant instead of overriding modal colors.",
       "Do not hardcode header, icon, footer, focus, warning, or error colors.",
       "Use buttonDefs to customize modal actions rather than replacing the footer by default."
     ]
@@ -129,12 +129,12 @@
   "propOverrides": {
     "type": {
       "defaultValue": "transactional",
-      "description": "Visual and behavioral intent of the modal."
+      "description": "Visual and behavioral variant of the modal."
     },
     "closeButton": {
       "description": "Controls whether the modal title renders a close button. Error, informational, and feedback modals are closeable by default."
     }
   },
   "needsReview": true,
-  "needsReviewReason": "First contract version captures Modal and ModalFooter public structures, but inherited Dialog props are intentionally not exhaustively recommended."
+  "needsReviewReason": "First contract version captures Modal and ModalFooter public structures, but inherited Dialog props are not exhaustively recommended."
 }
